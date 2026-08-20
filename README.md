@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://github.com/nageoffer/ragent">
+  <a href="https://github.com/xyt0605/AgentHub">
     <picture>
       <source srcset="assets/ragent-ai-banner.png">
       <img src="assets/ragent-ai-banner.png" alt="Ragent AI">
@@ -12,9 +12,8 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/nageoffer/ragent/stargazers"><img alt="GitHub stars" src="https://img.shields.io/github/stars/nageoffer/ragent?style=flat-square&logo=github&color=e8b227" /></a>&nbsp;
-  <a href="https://github.com/nageoffer/ragent/network/members"><img alt="GitHub forks" src="https://img.shields.io/github/forks/nageoffer/ragent?style=flat-square&logo=github&color=2d6a8a" /></a>&nbsp;
-  <a href="https://github.com/nageoffer/ragent/graphs/contributors"><img alt="Contributors" src="https://img.shields.io/github/contributors/nageoffer/ragent?style=flat-square&color=b56e7a" /></a>&nbsp;
+  <a href="https://github.com/xyt0605/AgentHub/stargazers"><img alt="GitHub stars" src="https://img.shields.io/github/stars/xyt0605/AgentHub?style=flat-square&logo=github&color=e8b227" /></a>&nbsp;
+  <a href="https://github.com/xyt0605/AgentHub/network/members"><img alt="GitHub forks" src="https://img.shields.io/github/forks/xyt0605/AgentHub?style=flat-square&logo=github&color=2d6a8a" /></a>&nbsp;
   <a href="./LICENSE"><img alt="License" src="https://img.shields.io/badge/license-Apache--2.0-4a9b8f?style=flat-square" /></a>
   <img src="https://img.shields.io/badge/Spring%20AI-2.0-6DB33F?style=flat-square&logo=springboot&logoColor=white" />
 </p>
@@ -39,7 +38,7 @@ Ragent 是一个面向 Agentic RAG 演进的生产级 Java AI 应用平台，覆
 > 觉得不错？先点个 Star 收藏，所有链接都会在新标签页打开，不会离开本页 👇
 
 <p align="left">
-  <a href="https://github.com/nageoffer/ragent/stargazers">
+  <a href="https://github.com/xyt0605/AgentHub/stargazers">
     <img src="assets/star-me.svg" alt="Star this repo" />
   </a>
 </p>
@@ -51,16 +50,6 @@ Ragent 是一个面向 Agentic RAG 演进的生产级 Java AI 应用平台，覆
 | ⚡ | <a href="https://nageoffer.com/ragent/local-dev/" target="_blank">快速启动</a> | 本地搭建 Ragent AI 前后端项目 |
 | 📝 | <a href="https://nageoffer.com/ragent/interview/" target="_blank">简历怎么写</a> | 项目如何写到简历上 |
 | 💡 | <a href="https://nageoffer.com/ragent/why-springai-langchain4j/" target="_blank">为什么不用 Spring AI / LangChain4j</a> | 技术选型的思考 |
-
-## 🤝 贡献
-
-Ragent AI 仍在持续迭代中，欢迎参与共建，一起把项目打磨得更好。 感谢各位亦菲、彦祖们对 Ragent AI 的贡献：
-
-<p align="left">
-    <a href="https://github.com/nageoffer/ragent/graphs/contributors">
-        <img src="https://contrib.rocks/image?repo=nageoffer/ragent&columns=8" />
-    </a>
-</p>
 
 ## ❤️ 赞助与支持
 
@@ -412,16 +401,6 @@ Ragent 不只是教你调 API，而是让你理解一个 RAG 系统从 0 到 1 �
 - **持续迭代更新**：项目会持续演进，Star 和 Watch 之后能第一时间获取新特性。
 
 </details>
-
-<p align="center">
-  <a href="https://www.star-history.com/?repos=nageoffer%2Fragent&type=date&legend=top-left">
-    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/image?repos=nageoffer/ragent&type=date&theme=dark&legend=top-left" />
-      <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/image?repos=nageoffer/ragent&type=date&legend=top-left" />
-      <img alt="Star History Chart" src="https://api.star-history.com/image?repos=nageoffer/ragent&type=date&legend=top-left" />
-    </picture>
-  </a>
-</p>
 
 <p align="center">
   如果屏幕前的亦菲/彦祖觉得项目还不错，点个 Star 支持一下，这是对开源作者最好的认可！
