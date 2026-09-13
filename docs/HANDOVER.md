@@ -141,7 +141,7 @@ RAGChatController (/rag/v3/chat)
 
 - 模型调用失败走 `SseEmitterSender.fail()` → `completeWithError` 直接断连，**不发** `reject` SSE 事件；前端 `useStreamResponse` 的流中断重试逻辑兜底
 - MCP Server（9099）未启动时工具桥接为 0，不影响运行
-- 深度思考开关在 agent 引擎当前为预留透传（思考深度由模型自主决定）
+- 深度思考开关在 agent 引擎已透传为 enable_thinking 请求参数（GenerateOptions.additionalBodyParam，2026-09-14）
 
 ## 5. 本次改造记录（2026-08-30 ~ 08-31）
 
@@ -246,6 +246,8 @@ RAGChatController (/rag/v3/chat)
 7. **WSL 空闲回收**（§6.4 补充）：保活会话 `wsl sleep infinity` 需随开发会话重启；容器均有 `--restart unless-stopped` 可自愈
 8. **前端 tsc 不报的雷**：新建 .tsx 用 `React.*` 忘 import（UMD 全局类型不报错）、运行时 undefined 引用——**新建 UI 组件必须浏览器冒烟后再交付**；Python/脚本 patch 代码时每个替换必须 assert 匹配次数
 9. **trace 异步落库**：`t_rag_trace_node` 在对话结束后延迟写入，curl 完立即查会读到上一次的 run；验证模型路由选"默认路由绝不会用的供应商"（如 deepseek）区分度最高
+10. **"/models 探活通过 ≠ key 可用"（2026-09-14）**：各平台的模型列表接口对 key 校验宽松，chat/completions 才严格。当前运行时三家 key 在 chat 调用时全部 401（bailian "Incorrect API key"——运行时 key 为 sk-20f***3d02，并非早前实测成功的 sk-ws 开头 key；deepseek "Authentication Fails"；siliconflow "Token is invalid"），需到各平台重新生成密钥并在 AI 配置面板重填。agent 引擎模型调用失败会直接断连 SSE（§4.4 已知行为），前端表现为对话无响应
+11. **排查 agent/workflow 对话无响应的顺序**：先查 t_rag_trace_run 最新记录的 error_message（401/余额/超时一目了然），再查 t_message 是否落库，最后才怀疑代码；SSE 只发 meta 后挂住多为模型调用失败断连而非排队卡死
 
 ## 11. 关键入口速查（增量）
 
@@ -261,7 +263,8 @@ RAGChatController (/rag/v3/chat)
 
 ## 12. 待办与建议路线（更新）
 
-原 §7 待办状态：①真实 Key 端到端验收——已完成（bailian/siliconflow/deepseek 均实测连通与对话）；②agent 引擎来源面板——**未做**；③深度思考透传 agent——**未做**；④AGENT_MAIN 内置人设入库——**未做**；⑤多 agent 方向——**未做**；⑥品牌截图重制——**未做**。
+原 §7 待办状态：①真实 Key 端到端验收——workflow 已验证；②agent 引擎来源面板——**已实现（2026-09-14）**：KnowledgeSearchTool 增加命中收集器，Runner 在回答完成后经 SourcesAssembler 装配 SourceRef 走 onSources 通道，前端来源面板与消息落库自动复用；③深度思考透传 agent——**已实现（2026-09-14）**：buildAgent 经 AgentScope GenerateOptions.additionalBodyParam 显式下发 enable_thinking，与 workflow 客户端同语义；④AGENT_MAIN 内置人设入库——**已完成（2026-09-14）**：upgrades/v1.1.1/260914_agent_main_prompt.sql + init_data 同步，槽位清空仍回落代码内置；⑤多 agent 方向——**未做**；⑥品牌截图重制——**未做**。
+⚠️ 注意：②③的端到端验证受当前密钥问题阻塞（见 §10 第 10 条），代码链路已通过日志确认执行到位（AgentModelFactory 构建 -> 模型 HTTP 调用），待有效密钥后切 agenthub.engine.type=agent 复验来源面板与思考档。
 
 新增待办（按优先级）：
 

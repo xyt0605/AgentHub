@@ -20,8 +20,12 @@ package com.nageoffer.ai.ragent.agent.runtime;
 import cn.hutool.core.util.StrUtil;
 import com.nageoffer.ai.ragent.agent.config.AgentProperties;
 import com.nageoffer.ai.ragent.framework.convention.ChatMessage;
+import com.nageoffer.ai.ragent.framework.convention.RetrievedChunk;
+import com.nageoffer.ai.ragent.framework.convention.SourceRef;
 import com.nageoffer.ai.ragent.framework.web.StreamTaskManager;
 import com.nageoffer.ai.ragent.infra.chat.StreamCallback;
+import com.nageoffer.ai.ragent.rag.core.source.SourcesAssembler;
+import io.agentscope.core.model.GenerateOptions;
 import com.nageoffer.ai.ragent.rag.config.RAGDefaultProperties;
 import com.nageoffer.ai.ragent.rag.core.memory.ConversationMemoryService;
 import com.nageoffer.ai.ragent.rag.core.prompt.AgentPromptResolver;
@@ -43,7 +47,9 @@ import org.springframework.stereotype.Component;
 import reactor.core.Disposable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * ReAct 执行器（v2 Agent 架构核心）
@@ -80,6 +86,7 @@ public class ReActAgentRunner {
     private final AgentPromptResolver promptResolver;
     private final ConversationMemoryService memoryService;
     private final McpToolBridge mcpToolBridge;
+    private final SourcesAssembler sourcesAssembler;
     private final ObjectProvider<VectorRetrieverService> retrieverProvider;
     private final RAGDefaultProperties defaultProperties;
     private final StreamTaskManager taskManager;
@@ -88,17 +95,19 @@ public class ReActAgentRunner {
      * @param question       用户问题
      * @param conversationId 会话 ID
      * @param taskId         任务 ID（回调通道已注册取消收尾）
-     * @param deepThinking   深度思考开关（当前模型自主决定思考深度，预留透传）
+     * @param deepThinking   深度思考开关（透传为 OpenAI 兼容 enable_thinking 请求参数）
      * @param userId         用户 ID（请求线程外执行，须由调用方先取出）
      * @param callback       SSE 回调通道
      */
     public void run(String question, String conversationId, String taskId,
                     boolean deepThinking, String userId, StreamCallback callback) {
+        // 知识检索工具的命中收集器：回答完成后装配文档级来源（线程安全，工具跑在 boundedElastic）
+        List<RetrievedChunk> collectedSources = Collections.synchronizedList(new ArrayList<>());
         List<Msg> messages;
         ReActAgent agent;
         try {
             messages = prepareMessages(question, conversationId, userId, callback);
-            agent = buildAgent();
+            agent = buildAgent(deepThinking, collectedSources);
         } catch (Exception e) {
             log.error("Agent 构建失败, taskId={}, conversationId={}", taskId, conversationId, e);
             callback.onError(e);
@@ -116,9 +125,19 @@ public class ReActAgentRunner {
                             }
                         },
                         () -> {
-                            if (!taskManager.isCancelled(taskId)) {
-                                callback.onComplete();
+                            if (taskManager.isCancelled(taskId)) {
+                                return;
                             }
+                            // 回答完成后装配来源：onSources 暂存于回调通道，随 finish 事件下发并落库
+                            try {
+                                List<SourceRef> sources = sourcesAssembler.assemble(Map.of("agent", collectedSources));
+                                if (!sources.isEmpty()) {
+                                    callback.onSources(sources);
+                                }
+                            } catch (Exception e) {
+                                log.warn("Agent 来源装配失败, taskId={}, reason={}", taskId, e.getMessage());
+                            }
+                            callback.onComplete();
                         });
 
         taskManager.bindHandle(taskId, () -> {
@@ -162,28 +181,33 @@ public class ReActAgentRunner {
         return MsgRole.SYSTEM;
     }
 
-    private ReActAgent buildAgent() {
+    private ReActAgent buildAgent(boolean deepThinking, List<RetrievedChunk> collectedSources) {
         Toolkit toolkit = new Toolkit();
-        registerTools(toolkit);
+        registerTools(toolkit, collectedSources);
         String systemPrompt = promptResolver.resolve(AgentPromptSlot.AGENT_MAIN);
         if (StrUtil.isBlank(systemPrompt)) {
             systemPrompt = DEFAULT_SYSTEM_PROMPT;
         }
+        // 思考开关透传：与 workflow 的 OpenAI 风格客户端同语义，显式下发 enable_thinking
+        GenerateOptions generateOptions = GenerateOptions.builder()
+                .additionalBodyParam("enable_thinking", deepThinking)
+                .build();
         return ReActAgent.builder()
                 .name(AGENT_NAME)
                 .sysPrompt(systemPrompt)
                 .model(modelFactory.resolve())
                 .toolkit(toolkit)
+                .generateOptions(generateOptions)
                 .maxIters(agentProperties.getMaxIters())
                 .maxRetries(agentProperties.getMaxRetries())
                 .build();
     }
 
-    private void registerTools(Toolkit toolkit) {
+    private void registerTools(Toolkit toolkit, List<RetrievedChunk> collectedSources) {
         VectorRetrieverService retriever = retrieverProvider.getIfAvailable();
         if (retriever != null) {
             toolkit.registerAgentTool(new KnowledgeSearchTool(
-                    retriever, defaultProperties, agentProperties.getKbTopK()));
+                    retriever, defaultProperties, agentProperties.getKbTopK(), collectedSources));
         } else {
             log.warn("向量检索服务不可用，Agent 未注册知识库检索工具");
         }

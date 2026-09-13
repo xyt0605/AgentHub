@@ -51,6 +51,12 @@ public class KnowledgeSearchTool implements AgentTool {
     private final RAGDefaultProperties defaultProperties;
     private final int defaultTopK;
 
+    /**
+     * 检索命中收集器（调用方提供，线程安全）：每次工具执行的命中片段汇入其中，
+     * 供 Runner 在回答完成前装配文档级来源面板
+     */
+    private final List<RetrievedChunk> sourceCollector;
+
     @Override
     public String getName() {
         return TOOL_NAME;
@@ -112,6 +118,7 @@ public class KnowledgeSearchTool implements AgentTool {
             log.info("知识库检索工具无结果, query={}, elapsed={}ms", query, System.currentTimeMillis() - startMs);
             return ToolResultBlock.text("知识库中未检索到与「" + query + "」相关的内容。");
         }
+        sourceCollector.addAll(chunks);
         StringBuilder output = new StringBuilder("共检索到 ").append(chunks.size()).append(" 条知识库片段：\n\n");
         for (int i = 0; i < chunks.size(); i++) {
             RetrievedChunk chunk = chunks.get(i);

@@ -63,7 +63,7 @@ public class AgentChatEngine implements ChatEngine {
 
     /**
      * agent 引擎为单模型架构（agent.chat.provider/model），不支持按请求切换模型与档位：
-     * preferredModelId / tierKey 忽略并记录日志，思考行为由模型自主决定
+     * preferredModelId / tierKey 忽略并记录日志；deepThinking 透传为 enable_thinking 请求参数
      */
     @Override
     public void streamChat(String question, String conversationId, Boolean deepThinking,
