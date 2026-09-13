@@ -243,7 +243,7 @@ export function AgentPromptPage() {
             <>
               <header className="agent-prompt-pane__header">
                 <div className="flex min-w-0 flex-wrap items-center gap-2">
-                  <h2 className="text-sm font-semibold text-slate-900">{activeSlot.displayName}</h2>
+                  <h2 className="text-sm font-semibold text-zinc-100">{activeSlot.displayName}</h2>
                   {activeSlot.effective ? (
                     <Badge className="text-[11px] font-normal">当前生效</Badge>
                   ) : (
@@ -257,7 +257,7 @@ export function AgentPromptPage() {
                     </Badge>
                   )}
                   {builtin ? (
-                    <span className="inline-flex items-center gap-1 text-xs text-slate-400">
+                    <span className="inline-flex items-center gap-1 text-xs text-zinc-500">
                       <Lock className="h-3 w-3" />
                       只读
                     </span>
@@ -286,7 +286,7 @@ export function AgentPromptPage() {
 
               {activeSlot.requiredPlaceholders.length > 0 ? (
                 <div className="agent-prompt-pane__placeholders">
-                  <span className="text-slate-400">必需占位符</span>
+                  <span className="text-zinc-500">必需占位符</span>
                   {activeSlot.requiredPlaceholders.map((placeholder) => (
                     <code
                       key={placeholder}
@@ -319,13 +319,13 @@ export function AgentPromptPage() {
 
               <footer className="agent-prompt-pane__footer">
                 <span>{stats}</span>
-                <span className={cn(dirty ? "text-amber-600" : "text-slate-400")}>
+                <span className={cn(dirty ? "text-amber-300" : "text-zinc-500")}>
                   {dirty ? "有未保存的改动" : "已与服务端一致"}
                 </span>
               </footer>
             </>
           ) : (
-            <div className="flex flex-1 items-center justify-center text-sm text-slate-400">
+            <div className="flex flex-1 items-center justify-center text-sm text-zinc-500">
               {loading ? "加载中…" : "暂无可配置的提示词"}
             </div>
           )}

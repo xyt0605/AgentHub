@@ -328,7 +328,7 @@ export function KnowledgeChunksPage() {
           )}
 
           {pageData ? (
-            <div className="mt-4 flex flex-wrap items-center justify-between gap-2 text-sm text-slate-500">
+            <div className="mt-4 flex flex-wrap items-center justify-between gap-2 text-sm text-zinc-400">
               <span>共 {pageData.total} 条</span>
               <div className="flex items-center gap-2">
                 <Button variant="outline" size="sm" onClick={() => setPageNo((prev) => Math.max(1, prev - 1))} disabled={pageData.current <= 1}>

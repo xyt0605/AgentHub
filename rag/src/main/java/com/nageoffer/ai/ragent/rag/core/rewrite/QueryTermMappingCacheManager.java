@@ -40,7 +40,7 @@ public class QueryTermMappingCacheManager {
     private final StringRedisTemplate stringRedisTemplate;
     private final ObjectMapper objectMapper;
 
-    private static final String CACHE_KEY = "ragent:query-term:mappings";
+    private static final String CACHE_KEY = "agenthub:query-term:mappings";
 
     /**
      * 缓存过期时间：7天

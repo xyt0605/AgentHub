@@ -17,7 +17,7 @@
 
 package com.nageoffer.ai.ragent.core.parser.mineru;
 
-import com.nageoffer.ai.ragent.TestRagentApplication;
+import com.nageoffer.ai.ragent.TestAgenthubApplication;
 import com.nageoffer.ai.ragent.core.parser.BlockTextRenderer;
 import com.nageoffer.ai.ragent.core.parser.model.ParsedDocument;
 import org.junit.jupiter.api.DisplayName;
@@ -63,7 +63,7 @@ import java.util.zip.ZipInputStream;
  * <p>
  * MinerU 返回的 zip 会自动解压到仓库根目录下的 {@code .mineru-output/}(临时目录,已加入 .gitignore)
  */
-@SpringBootTest(classes = TestRagentApplication.class, webEnvironment = WebEnvironment.NONE)
+@SpringBootTest(classes = TestAgenthubApplication.class, webEnvironment = WebEnvironment.NONE)
 @EnabledIfSystemProperty(named = "mineru.test.pdf", matches = ".+")
 @DisplayName("MinerU PDF 上传解析全流程(真实环境)")
 class MinerUPdfUploadFlowTest {
@@ -115,8 +115,8 @@ class MinerUPdfUploadFlowTest {
         System.out.println("==== MinerU 解析出的 Markdown(原始) ====");
         System.out.println(extractMarkdown(zipBytes));
 
-        // 打印 ragent Block 渲染后的 markdown
-        System.out.println("==== ragent Block 渲染 Markdown ====");
+        // 打印 agenthub Block 渲染后的 markdown
+        System.out.println("==== agenthub Block 渲染 Markdown ====");
         System.out.println(BlockTextRenderer.render(result.blocks()));
         System.out.println("==== Block 数量: " + result.blocks().size());
     }

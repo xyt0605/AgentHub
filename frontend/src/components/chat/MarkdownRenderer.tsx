@@ -244,7 +244,7 @@ export function MarkdownRenderer({ content, messageId, sources }: MarkdownRender
 
           if (hasError) {
             return (
-              <div className="my-3 flex items-center gap-2 text-sm text-[#999999]">
+              <div className="my-3 flex items-center gap-2 text-sm text-zinc-400">
                 <ImageIcon className="h-4 w-4" />
                 <span>图片加载失败</span>
               </div>
@@ -421,7 +421,7 @@ export function MarkdownRenderer({ content, messageId, sources }: MarkdownRender
           return <hr className="my-6 border-0 border-t border-[#d0d7de] dark:border-[#30363d]" {...props} />;
         }
       }}
-      className="prose prose-gray max-w-none break-words leading-[1.6] dark:prose-invert prose-headings:text-[#1A1A1A] dark:prose-headings:text-[#EEEEEE] prose-p:text-[#333333] dark:prose-p:text-[#CCCCCC] prose-p:leading-relaxed prose-li:text-[#333333] dark:prose-li:text-[#CCCCCC] prose-strong:text-[#1A1A1A] dark:prose-strong:text-[#EEEEEE]"
+      className="prose prose-gray max-w-none break-words leading-[1.6] dark:prose-invert prose-headings:text-zinc-100 dark:prose-headings:text-[#EEEEEE] prose-p:text-zinc-100 dark:prose-p:text-zinc-500 prose-p:leading-relaxed prose-li:text-zinc-100 dark:prose-li:text-zinc-500 prose-strong:text-zinc-100 dark:prose-strong:text-[#EEEEEE]"
     >
       {content}
     </ReactMarkdown>
@@ -450,7 +450,7 @@ function CopyButton({ value }: { value: string }) {
       className="h-7 w-7 hover:bg-[#eaeef2] dark:hover:bg-[#30363d] transition-colors"
     >
       {copied ? (
-        <Check className="h-3.5 w-3.5 text-green-600 dark:text-green-400" />
+        <Check className="h-3.5 w-3.5 text-emerald-300 dark:text-green-400" />
       ) : (
         <Copy className="h-3.5 w-3.5 text-[#57606a] dark:text-[#8b949e]" />
       )}

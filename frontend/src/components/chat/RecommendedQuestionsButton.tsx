@@ -24,15 +24,15 @@ export function RecommendedQuestionsButton({ message }: RecommendedQuestionsButt
       className={cn(
         "inline-flex items-center gap-1.5 rounded-full py-1 pl-2.5 pr-2 text-xs transition-colors",
         open
-          ? "bg-[#EAF1FF] text-[#2563EB]"
-          : "text-[#666666] hover:bg-[#F0F0F1] hover:text-[#1A1A1A]",
+          ? "bg-violet-500/25 text-violet-300"
+          : "text-zinc-400 hover:bg-white/10 hover:text-zinc-100",
         spinning && "cursor-wait opacity-80"
       )}
     >
       {spinning ? (
         <Loader2 className="h-3.5 w-3.5 animate-spin" />
       ) : (
-        <Sparkles className={cn("h-3.5 w-3.5", open && "text-[#3B82F6]")} />
+        <Sparkles className={cn("h-3.5 w-3.5", open && "text-cyan-300")} />
       )}
       推荐问题
       <ChevronDown

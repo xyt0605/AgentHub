@@ -45,7 +45,7 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 public class StorageInitializer {
 
-    private static final String LOCK_KEY_PREFIX = "ragent:storage:bucket:init:";
+    private static final String LOCK_KEY_PREFIX = "agenthub:storage:bucket:init:";
     private static final long LOCK_WAIT_SECONDS = 30;
 
     private final ObjectStorageClient objectStorageClient;

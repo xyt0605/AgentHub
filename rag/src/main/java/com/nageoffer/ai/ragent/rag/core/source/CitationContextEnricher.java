@@ -33,7 +33,7 @@ import java.util.regex.Pattern;
 /**
  * 为已格式化的知识库上下文注入请求级引用编号
  * <p>
- * 上下文格式化阶段只写入内部 {@code data-ragent-doc-id}，来源装配完成后再依据
+ * 上下文格式化阶段只写入内部 {@code data-agenthub-doc-id}，来源装配完成后再依据
  * {@link SourceRef#getIndex()} 替换为模型可见的 {@code ref}。这样 Prompt、SSE、落库和前端
  * 始终复用同一份来源编号，同时不把内部文档 ID 暴露给模型
  * <p>
@@ -45,7 +45,7 @@ import java.util.regex.Pattern;
 public class CitationContextEnricher {
 
     private static final Pattern CONTENT_TAG = Pattern.compile(
-            "(?m)^<content([^>]*) data-ragent-doc-id=\"([^\"]*)\">$");
+            "(?m)^<content([^>]*) data-agenthub-doc-id=\"([^\"]*)\">$");
 
     private final RAGConfigProperties ragConfigProperties;
 

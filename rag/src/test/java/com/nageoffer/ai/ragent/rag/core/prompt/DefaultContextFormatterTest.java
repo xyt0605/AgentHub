@@ -67,8 +67,8 @@ class DefaultContextFormatterTest {
         assertTrue(result.indexOf("B-idx0正文") < result.indexOf("孤块正文"), "无归属孤块应排在最后");
 
         // 只注入内部 docId，文档名一律不进上下文（模型拿不到名字才不会写"出自《XX》"）
-        assertTrue(result.contains("data-ragent-doc-id=\"docA\""), "应携带内部 docId 供后续注入引用编号");
-        assertTrue(result.contains("data-ragent-doc-id=\"docB\""));
+        assertTrue(result.contains("data-agenthub-doc-id=\"docA\""), "应携带内部 docId 供后续注入引用编号");
+        assertTrue(result.contains("data-agenthub-doc-id=\"docB\""));
         assertFalse(result.contains("source="), "不应再注入 source 属性");
         assertFalse(result.contains("员工手册"), "文档名不得进入上下文");
         assertFalse(result.contains("报销政策"));
@@ -97,7 +97,7 @@ class DefaultContextFormatterTest {
 
         String result = formatter().formatKbContext(List.of(), Set.of(), chunks, 100);
 
-        assertTrue(result.contains("<content data-ragent-doc-id=\"docC\">"));
+        assertTrue(result.contains("<content data-agenthub-doc-id=\"docC\">"));
     }
 
     @Test

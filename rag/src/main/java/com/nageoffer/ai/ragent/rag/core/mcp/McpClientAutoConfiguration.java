@@ -73,7 +73,7 @@ public class McpClientAutoConfiguration {
                     HttpClientStreamableHttpTransport.builder(mcpUrl).build();
 
             McpSyncClient client = McpClient.sync(transport)
-                    .clientInfo(new Implementation("ragent-bootstrap", "1.0.0"))
+                    .clientInfo(new Implementation("agenthub-bootstrap", "1.0.0"))
                     .build();
             client.initialize();
             clients.add(client);

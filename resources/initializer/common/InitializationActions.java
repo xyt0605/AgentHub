@@ -26,7 +26,7 @@ import java.util.concurrent.ThreadLocalRandom;
 /** Reusable operations invoked by the small Main entry points. */
 final class InitializationActions {
 
-    private static final String INITIALIZER_LOCK_KEY = "ragent:initializer:lock";
+    private static final String INITIALIZER_LOCK_KEY = "agenthub:initializer:lock";
 
     private InitializationActions() {
     }
@@ -51,7 +51,7 @@ final class InitializationActions {
                 "演示问题数量与配置不一致，expected=" + expectedQuestions
                         + ", actual=" + context.dataset().questions().size());
 
-        System.out.println("[preflight] 登录 RagentAI");
+        System.out.println("[preflight] 登录 AgenthubAI");
         context.loginAsAdmin();
         Map<String, Object> currentUser = SimpleJson.object(context.http().get("/user/me"));
         require("admin".equalsIgnoreCase(SimpleJson.string(currentUser, "role")), "当前用户不是 Admin");
@@ -97,7 +97,7 @@ final class InitializationActions {
             System.out.println("[cleanup] 执行固定白名单 SQL: " + cleanupSql);
             context.jdbc().executeScript(cleanupSql);
 
-            System.out.println("[cleanup] 精确清理 Ragent 缓存和已结束任务 Key");
+            System.out.println("[cleanup] 精确清理 Agenthub 缓存和已结束任务 Key");
             clearRedis(context);
             System.out.println("[cleanup] 完成");
         } finally {
@@ -177,7 +177,7 @@ final class InitializationActions {
                     String status = SimpleJson.string(document, "status");
                     require(!"running".equalsIgnoreCase(status), "已有文档正在分块，无法替换: " + filename);
                     context.http().delete("/knowledge-base/docs/" +
-                            RagentHttpClient.encodePath(SimpleJson.string(document, "id")));
+                            AgenthubHttpClient.encodePath(SimpleJson.string(document, "id")));
                 }
 
                 System.out.printf("[document] 上传 kb=%s file=%s%n", definition.name(), filename);
@@ -185,7 +185,7 @@ final class InitializationActions {
                         context.http().uploadDocument(runtime.id(), file, definition.ingestionSpec()));
                 String docId = SimpleJson.string(uploaded, "id");
                 require(docId != null && !docId.isBlank(), "上传响应缺少文档 ID: " + filename);
-                context.http().postEmpty("/knowledge-base/docs/" + RagentHttpClient.encodePath(docId) + "/chunk");
+                context.http().postEmpty("/knowledge-base/docs/" + AgenthubHttpClient.encodePath(docId) + "/chunk");
                 waitForDocument(context, docId, filename);
             }
         }
@@ -247,7 +247,7 @@ final class InitializationActions {
         }
         List<Map<String, Object>> existing = fetchAllPages(context, "/sample-questions");
         for (Map<String, Object> item : existing) {
-            context.http().delete("/sample-questions/" + RagentHttpClient.encodePath(SimpleJson.string(item, "id")));
+            context.http().delete("/sample-questions/" + AgenthubHttpClient.encodePath(SimpleJson.string(item, "id")));
         }
         if (!existing.isEmpty()) {
             System.out.println("[sample-question] 已清理旧示例问题: " + existing.size());
@@ -365,7 +365,7 @@ final class InitializationActions {
     private static String ask(InitializerContext context, WarmupRun run, String label, String text,
                               String conversationId) throws InterruptedException {
         Instant started = Instant.now();
-        RagentHttpClient.ChatStreamResult result = chat(context, run, label, text, conversationId);
+        AgenthubHttpClient.ChatStreamResult result = chat(context, run, label, text, conversationId);
         if (result == null) {
             return null;
         }
@@ -379,7 +379,7 @@ final class InitializationActions {
     /**
      * 重试沿用同一个 conversationId，首轮为空则每次尝试都新开会话，失败的那次会在会话列表里留下半截记录
      */
-    private static RagentHttpClient.ChatStreamResult chat(InitializerContext context, WarmupRun run, String label,
+    private static AgenthubHttpClient.ChatStreamResult chat(InitializerContext context, WarmupRun run, String label,
                                                           String text, String conversationId)
             throws InterruptedException {
         for (int attempt = 1; ; attempt++) {
@@ -409,7 +409,7 @@ final class InitializationActions {
             String failure;
             try {
                 Object data = context.http().postEmpty("/conversations/messages/"
-                        + RagentHttpClient.encodePath(messageId) + "/recommended-questions");
+                        + AgenthubHttpClient.encodePath(messageId) + "/recommended-questions");
                 Map<String, Object> payload = SimpleJson.object(data);
                 String status = SimpleJson.string(payload, "status");
                 // EMPTY 是已落库的负缓存，FAILED 才是什么都没写下去
@@ -528,7 +528,7 @@ final class InitializationActions {
                 String name = SimpleJson.string(document, "docName");
                 require(!"running".equalsIgnoreCase(status), "文档正在分块，拒绝清理: " + name);
                 String docId = SimpleJson.string(document, "id");
-                context.http().delete("/knowledge-base/docs/" + RagentHttpClient.encodePath(docId));
+                context.http().delete("/knowledge-base/docs/" + AgenthubHttpClient.encodePath(docId));
                 System.out.println("[cleanup] 已删除文档: " + name + " (" + docId + ")");
             }
         }
@@ -560,8 +560,8 @@ final class InitializationActions {
                 + "(SELECT COUNT(*) FROM t_ingestion_task WHERE lower(status)='running' "
                 + "AND update_time >= NOW() - INTERVAL '" + interval + "')";
         long runningRows = context.jdbc().queryLong(sql);
-        int activeRedis = context.redis().scan("ragent:agent:running:*").size()
-                + context.redis().scan("ragent:stream:owner:*").size();
+        int activeRedis = context.redis().scan("agenthub:agent:running:*").size()
+                + context.redis().scan("agenthub:stream:owner:*").size();
         require(runningRows == 0 && activeRedis == 0,
                 "检测到运行中的任务，拒绝初始化: db=" + runningRows + ", redis=" + activeRedis);
     }
@@ -592,7 +592,7 @@ final class InitializationActions {
         Instant deadline = Instant.now().plus(timeout);
         while (Instant.now().isBefore(deadline)) {
             Map<String, Object> document = SimpleJson.object(context.http().get(
-                    "/knowledge-base/docs/" + RagentHttpClient.encodePath(docId)));
+                    "/knowledge-base/docs/" + AgenthubHttpClient.encodePath(docId)));
             String status = SimpleJson.string(document, "status");
             if ("success".equalsIgnoreCase(status)) {
                 int chunks = SimpleJson.integer(document, "chunkCount", 0);
@@ -610,7 +610,7 @@ final class InitializationActions {
 
     private static String latestChunkError(InitializerContext context, String docId) {
         try {
-            Object pageValue = context.http().get("/knowledge-base/docs/" + RagentHttpClient.encodePath(docId)
+            Object pageValue = context.http().get("/knowledge-base/docs/" + AgenthubHttpClient.encodePath(docId)
                     + "/chunk-logs?current=1&size=1");
             List<Map<String, Object>> records = pageRecords(pageValue);
             if (records.isEmpty()) {
@@ -644,7 +644,7 @@ final class InitializationActions {
     }
 
     private static List<Map<String, Object>> listDocuments(InitializerContext context, String kbId) throws Exception {
-        return fetchAllPages(context, "/knowledge-base/" + RagentHttpClient.encodePath(kbId) + "/docs");
+        return fetchAllPages(context, "/knowledge-base/" + AgenthubHttpClient.encodePath(kbId) + "/docs");
     }
 
     private static List<Map<String, Object>> fetchAllPages(InitializerContext context, String path) throws Exception {

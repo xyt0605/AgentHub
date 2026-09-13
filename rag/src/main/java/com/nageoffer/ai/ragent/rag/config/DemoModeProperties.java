@@ -26,7 +26,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Data
 @Configuration
-@ConfigurationProperties(prefix = "ragent")
+@ConfigurationProperties(prefix = "agenthub")
 public class DemoModeProperties {
 
     /**

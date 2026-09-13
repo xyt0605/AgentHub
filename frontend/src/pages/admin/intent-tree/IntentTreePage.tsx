@@ -294,7 +294,7 @@ export function IntentTreePage() {
           <div
               className={cn(
                   "group flex cursor-pointer items-center justify-between rounded-xl px-3 py-2 transition-colors",
-                  isSelected ? "bg-slate-100 text-slate-900" : "hover:bg-slate-50"
+                  isSelected ? "bg-white/10 text-zinc-100" : "hover:bg-white/10"
               )}
               style={{ paddingLeft: `${depth * 16 + 12}px` }}
               onClick={() => setSelectedCode(node.intentCode)}

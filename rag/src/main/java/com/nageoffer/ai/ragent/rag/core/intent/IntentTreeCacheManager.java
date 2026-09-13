@@ -42,7 +42,7 @@ public class IntentTreeCacheManager {
     /**
      * Redis缓存Key
      */
-    private static final String INTENT_TREE_CACHE_KEY = "ragent:intent:tree";
+    private static final String INTENT_TREE_CACHE_KEY = "agenthub:intent:tree";
 
     /**
      * 缓存过期时间：7天

@@ -20,7 +20,7 @@ package com.nageoffer.ai.ragent.rag.config;
 import cn.hutool.core.util.StrUtil;
 
 /**
- * 执行架构档位，由 ragent.engine.type 指定
+ * 执行架构档位，由 agenthub.engine.type 指定
  * <p>
  * 属部署级决策（切换需重启，且 AGENT 依赖外部 ReAct 服务存活），因此不开放后台切换
  */

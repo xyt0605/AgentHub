@@ -24,11 +24,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
- * Ragent 核心应用启动类
+ * Agenthub 核心应用启动类
  */
 @SpringBootApplication
 @EnableScheduling
-@EnableLogRecord(tenant = "ragent", proxyTargetClass = true)
+@EnableLogRecord(tenant = "agenthub", proxyTargetClass = true)
 @MapperScan(basePackages = {
         "com.nageoffer.ai.ragent.rag.dao.mapper",
         "com.nageoffer.ai.ragent.ingestion.dao.mapper",
@@ -36,9 +36,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         "com.nageoffer.ai.ragent.user.dao.mapper",
         "com.nageoffer.ai.ragent.audit.dao.mapper"
 })
-public class RagentApplication {
+public class AgenthubApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(RagentApplication.class, args);
+        SpringApplication.run(AgenthubApplication.class, args);
     }
 }

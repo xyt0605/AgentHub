@@ -184,9 +184,9 @@ const parseIngestionSpec = (raw?: string | null): Record<string, unknown> => {
 const statusDotClass = (status?: string | null) => {
   if (!status) return "bg-muted-foreground/40";
   const normalized = status.toLowerCase();
-  if (normalized === "success") return "bg-emerald-500";
-  if (normalized === "failed") return "bg-red-500";
-  if (normalized === "running") return "bg-amber-500";
+  if (normalized === "success") return "bg-emerald-500/150";
+  if (normalized === "failed") return "bg-red-500/150";
+  if (normalized === "running") return "bg-amber-500/150";
   if (normalized === "pending") return "bg-slate-400";
   return "bg-muted-foreground/40";
 };
@@ -313,13 +313,13 @@ const hasParseProfileChoice = (schema: IngestionSpecSchema | null, ext?: string 
 
 const FILE_TYPE_MAP: Record<string, { icon: typeof FileText; color: string }> = {
   pdf:         { icon: FileText, color: "text-red-500" },
-  markdown:    { icon: FileText, color: "text-blue-500" },
-  md:          { icon: FileText, color: "text-blue-500" },
-  doc:         { icon: FileText, color: "text-blue-600" },
-  docx:        { icon: FileText, color: "text-blue-600" },
-  txt:         { icon: FileText, color: "text-slate-500" },
-  xlsx:        { icon: FileSpreadsheet, color: "text-green-600" },
-  xls:         { icon: FileSpreadsheet, color: "text-green-600" },
+  markdown:    { icon: FileText, color: "text-cyan-300" },
+  md:          { icon: FileText, color: "text-cyan-300" },
+  doc:         { icon: FileText, color: "text-violet-300" },
+  docx:        { icon: FileText, color: "text-violet-300" },
+  txt:         { icon: FileText, color: "text-zinc-400" },
+  xlsx:        { icon: FileSpreadsheet, color: "text-green-300" },
+  xls:         { icon: FileSpreadsheet, color: "text-green-300" },
   csv:         { icon: FileSpreadsheet, color: "text-emerald-500" },
   image:       { icon: FileImage, color: "text-emerald-500" },
   png:         { icon: FileImage, color: "text-emerald-500" },
@@ -339,7 +339,7 @@ const renderFileTypeIcon = (fileType?: string | null, sourceType?: string | null
   if (sourceType?.toLowerCase() === "url") {
     return <LinkIcon className="h-4 w-4 shrink-0 text-purple-500" />;
   }
-  return <FileText className="h-4 w-4 shrink-0 text-slate-400" />;
+  return <FileText className="h-4 w-4 shrink-0 text-zinc-500" />;
 };
 
 export function KnowledgeDocumentsPage() {
@@ -832,7 +832,7 @@ export function KnowledgeDocumentsPage() {
                           <div className="flex items-center gap-1.5 min-w-0">
                             <button
                               type="button"
-                              className="block truncate min-w-0 text-left font-medium text-slate-900 transition-colors hover:text-indigo-600 hover:underline underline-offset-4"
+                              className="block truncate min-w-0 text-left font-medium text-zinc-100 transition-colors hover:text-violet-200 hover:underline underline-offset-4"
                               title={doc.docName || ""}
                               onClick={() => navigate(`/admin/knowledge/${kbId}/docs/${doc.id}`)}
                             >
@@ -840,7 +840,7 @@ export function KnowledgeDocumentsPage() {
                             </button>
                             {doc.chunksEdited ? (
                               <span
-                                className="shrink-0 rounded-full bg-amber-50 px-1.5 py-px text-[10px] font-medium text-amber-700 ring-1 ring-amber-200"
+                                className="shrink-0 rounded-full bg-amber-500/15 px-1.5 py-px text-[10px] font-medium text-amber-300 ring-1 ring-amber-400/40"
                                 title="该文档存在被手工编辑过的分块，重新分块会丢失"
                               >
                                 已编辑
@@ -875,7 +875,7 @@ export function KnowledgeDocumentsPage() {
                             onClick={() => handleToggleEnabled(doc)}
                             className={cn(
                               "relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background",
-                              enabled ? "bg-blue-600" : "bg-slate-200"
+                              enabled ? "bg-violet-600" : "bg-white/10"
                             )}
                           >
                             <span
@@ -969,7 +969,7 @@ export function KnowledgeDocumentsPage() {
           )}
 
           {pageData ? (
-            <div className="mt-4 flex flex-wrap items-center justify-between gap-2 text-sm text-slate-500">
+            <div className="mt-4 flex flex-wrap items-center justify-between gap-2 text-sm text-zinc-400">
               <span>共 {pageData.total} 条</span>
               <div className="flex items-center gap-2">
                 <Button variant="outline" size="sm" onClick={() => setCurrent((prev) => Math.max(1, prev - 1))} disabled={pageData.current <= 1}>
@@ -1054,9 +1054,9 @@ export function KnowledgeDocumentsPage() {
                 {chunkTarget?.chunkCount ? (
                   <>
                     <div>文档 [{chunkTarget?.docName}] 已有 {chunkTarget.chunkCount} 个分块记录。</div>
-                    <div className="font-medium text-amber-600">重新分块会清空原有 Chunk 记录及向量数据。</div>
+                    <div className="font-medium text-amber-300">重新分块会清空原有 Chunk 记录及向量数据。</div>
                     {chunkTarget?.chunksEdited ? (
-                      <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+                      <div className="rounded-md border border-red-400/40 bg-red-500/15 px-3 py-2 text-sm text-red-300">
                         <span className="font-semibold">注意：</span>
                         该文档存在被手工编辑过的分块，重新分块会从源文件重新生成，
                         <span className="font-semibold">所有手动修改将丢失且无法恢复</span>。
@@ -1196,7 +1196,7 @@ export function KnowledgeDocumentsPage() {
                       onClick={handleDetailNoChunkToggle}
                       className={cn(
                         "relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background",
-                        detailNoChunk ? "bg-blue-600" : "bg-slate-200"
+                        detailNoChunk ? "bg-violet-600" : "bg-white/10"
                       )}
                     >
                       <span
@@ -1256,8 +1256,8 @@ export function KnowledgeDocumentsPage() {
         <DialogContent hideClose className={
           // 正文区用纯白：pdf 画布、docx 页面本身就是白的，弹窗底色带灰会在正文四周描出一圈内嵌外框
           previewTarget?.fileType === "pdf" || isDocxType(previewTarget?.fileType) || isSpreadsheetType(previewTarget?.fileType) || isImageType(previewTarget?.fileType)
-            ? "flex h-[92vh] flex-col overflow-hidden bg-white sm:max-w-[1100px] p-0"
-            : "flex max-h-[90vh] flex-col overflow-hidden bg-white sm:max-w-[900px] p-0"
+            ? "flex h-[92vh] flex-col overflow-hidden bg-[#0d1424] sm:max-w-[1100px] p-0"
+            : "flex max-h-[90vh] flex-col overflow-hidden bg-[#0d1424] sm:max-w-[900px] p-0"
         } onOpenAutoFocus={(e) => e.preventDefault()} onCloseAutoFocus={(e) => { e.preventDefault(); requestAnimationFrame(() => (document.activeElement as HTMLElement)?.blur()); }}>
           <div className="sticky top-0 z-10 flex items-center justify-between border-b bg-card px-6 py-3">
             <span className="text-sm font-medium text-muted-foreground truncate">{previewTarget?.docName || "预览"}</span>
@@ -1297,9 +1297,9 @@ export function KnowledgeDocumentsPage() {
                     <div className="flex items-center gap-3">
                       <span className={cn(
                         "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium",
-                        log.status === "success" ? "bg-emerald-50 text-emerald-700" :
-                        log.status === "failed" ? "bg-red-50 text-red-700" :
-                        "bg-amber-50 text-amber-700"
+                        log.status === "success" ? "bg-emerald-500/15 text-emerald-300" :
+                        log.status === "failed" ? "bg-red-500/15 text-red-300" :
+                        "bg-amber-500/15 text-amber-300"
                       )}>
                         {formatLogStatus(log.status)}
                       </span>
@@ -1315,46 +1315,46 @@ export function KnowledgeDocumentsPage() {
                   {/* 耗时指标卡片 */}
                   <div className={cn("grid gap-3", isPipelineLog ? "grid-cols-2 md:grid-cols-3" : "grid-cols-2 md:grid-cols-3 lg:grid-cols-4")}>
                     {!isPipelineLog && (
-                      <div className="rounded-lg border bg-slate-50/50 p-3">
+                      <div className="rounded-lg border bg-white/[0.04] p-3">
                         <div className="text-xs text-muted-foreground mb-1">文本提取</div>
                         <div className="text-lg font-semibold tabular-nums">{formatDuration(log.extractDuration)}</div>
                       </div>
                     )}
-                    <div className="rounded-lg border bg-slate-50/50 p-3">
+                    <div className="rounded-lg border bg-white/[0.04] p-3">
                       <div className="text-xs text-muted-foreground mb-1">{chunkLabel}</div>
                       <div className="text-lg font-semibold tabular-nums">{formatDuration(log.chunkDuration)}</div>
                     </div>
                     {!isPipelineLog && (
-                      <div className="rounded-lg border bg-slate-50/50 p-3">
+                      <div className="rounded-lg border bg-white/[0.04] p-3">
                         <div className="text-xs text-muted-foreground mb-1">向量化</div>
                         <div className="text-lg font-semibold tabular-nums">{formatDuration(log.embedDuration)}</div>
                       </div>
                     )}
-                    <div className="rounded-lg border bg-slate-50/50 p-3">
+                    <div className="rounded-lg border bg-white/[0.04] p-3">
                       <div className="text-xs text-muted-foreground mb-1">持久化</div>
                       <div className="text-lg font-semibold tabular-nums">{formatDuration(log.persistDuration)}</div>
                     </div>
-                    <div className="rounded-lg border bg-slate-50/50 p-3">
+                    <div className="rounded-lg border bg-white/[0.04] p-3">
                       <div className="text-xs text-muted-foreground mb-1">其他</div>
                       <div className="text-lg font-semibold tabular-nums">{formatDuration(log.otherDuration)}</div>
                     </div>
-                    <div className="rounded-lg border bg-blue-50 p-3">
-                      <div className="text-xs text-blue-600 mb-1">总耗时</div>
-                      <div className="text-lg font-bold tabular-nums text-blue-600">{formatDuration(log.totalDuration)}</div>
+                    <div className="rounded-lg border bg-violet-500/15 p-3">
+                      <div className="text-xs text-violet-300 mb-1">总耗时</div>
+                      <div className="text-lg font-bold tabular-nums text-violet-300">{formatDuration(log.totalDuration)}</div>
                     </div>
                   </div>
 
                   {/* 执行时间 */}
-                  <div className="flex items-center gap-2 text-sm text-slate-500">
+                  <div className="flex items-center gap-2 text-sm text-zinc-400">
                     <span>执行时间</span>
-                    <span className="tabular-nums text-slate-700">{formatFullDateTime(log.startTime)}</span>
+                    <span className="tabular-nums text-zinc-300">{formatFullDateTime(log.startTime)}</span>
                     <span>~</span>
-                    <span className="tabular-nums text-slate-700">{log.endTime ? formatFullDateTime(log.endTime) : "进行中"}</span>
+                    <span className="tabular-nums text-zinc-300">{log.endTime ? formatFullDateTime(log.endTime) : "进行中"}</span>
                   </div>
 
                   {/* 错误信息 */}
                   {log.errorMessage && (
-                    <div className="rounded-lg bg-red-50 p-3 text-sm text-red-600">
+                    <div className="rounded-lg bg-red-500/15 p-3 text-sm text-red-300">
                       <div className="font-medium mb-1">错误信息</div>
                       <div className="text-xs">{log.errorMessage}</div>
                     </div>
@@ -1906,7 +1906,7 @@ function UploadDialog({ open, onOpenChange, onSubmit }: UploadDialogProps) {
                       onClick={handleNoChunkToggle}
                       className={cn(
                         "relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background",
-                        noChunk ? "bg-blue-600" : "bg-slate-200"
+                        noChunk ? "bg-violet-600" : "bg-white/10"
                       )}
                     >
                       <span

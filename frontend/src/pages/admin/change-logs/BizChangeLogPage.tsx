@@ -20,7 +20,7 @@ import {
   type LucideIcon
 } from "lucide-react";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { oneLight } from "react-syntax-highlighter/dist/esm/styles/prism";
+import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { toast } from "sonner";
 
 import { RelativeTime } from "@/components/RelativeTime";
@@ -57,8 +57,8 @@ const PAGE_SIZE_OPTIONS = [10, 20, 50];
 const ALL_VALUE = "__all__";
 
 const FILTER_SELECT_TRIGGER_CLASS =
-  "h-10 border-slate-200 text-sm focus:ring-0 focus:ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0 data-[state=open]:border-slate-200 data-[state=open]:ring-0";
-const FILTER_INPUT_CLASS = "h-10 border-slate-200 text-sm focus-visible:border-slate-200 focus-visible:ring-0 focus-visible:ring-offset-0";
+  "h-10 border-white/10 text-sm focus:ring-0 focus:ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0 data-[state=open]:border-white/10 data-[state=open]:ring-0";
+const FILTER_INPUT_CLASS = "h-10 border-white/10 text-sm focus-visible:border-white/10 focus-visible:ring-0 focus-visible:ring-offset-0";
 
 const pad2 = (value: number) => String(value).padStart(2, "0");
 
@@ -132,16 +132,16 @@ const parseJson = (value?: string | null): unknown => {
 // 业务类型的图标与配色，让业务列更有辨识度也更大气
 const BIZ_TYPE_META: Record<string, { icon: LucideIcon; className: string }> = {
   // 跟 AgentAvatar 的 orbit-indigo 预设对齐，别单独挑图标和配色
-  AGENT_PROFILE: { icon: Orbit, className: "bg-[#eef2ff] text-[#6366F1]" },
-  KNOWLEDGE_BASE: { icon: Database, className: "bg-[#e6f7ff] text-[#1890FF]" },
-  KNOWLEDGE_DOCUMENT: { icon: FileText, className: "bg-[#f0f5ff] text-[#2F54EB]" },
-  KNOWLEDGE_CHUNK: { icon: Boxes, className: "bg-[#e6fffb] text-[#13C2C2]" },
-  INGESTION_PIPELINE: { icon: Workflow, className: "bg-[#fff7e6] text-[#FA8C16]" },
-  INGESTION_TASK: { icon: ListChecks, className: "bg-[#fffbe6] text-[#D48806]" },
-  INTENT_TREE: { icon: Network, className: "bg-[#f9f0ff] text-[#722ED1]" },
-  QUERY_TERM_MAPPING: { icon: Tags, className: "bg-[#fff0f6] text-[#EB2F96]" },
-  SAMPLE_QUESTION: { icon: MessagesSquare, className: "bg-[#f6ffed] text-[#52C41A]" },
-  USER: { icon: User, className: "bg-[#fff2e8] text-[#FA541C]" }
+  AGENT_PROFILE: { icon: Orbit, className: "bg-violet-500/15 text-violet-300" },
+  KNOWLEDGE_BASE: { icon: Database, className: "bg-violet-500/15 text-violet-300" },
+  KNOWLEDGE_DOCUMENT: { icon: FileText, className: "bg-violet-500/15 text-violet-300" },
+  KNOWLEDGE_CHUNK: { icon: Boxes, className: "bg-cyan-500/15 text-cyan-300" },
+  INGESTION_PIPELINE: { icon: Workflow, className: "bg-amber-500/15 text-amber-300" },
+  INGESTION_TASK: { icon: ListChecks, className: "bg-amber-500/15 text-amber-300" },
+  INTENT_TREE: { icon: Network, className: "bg-purple-500/15 text-purple-300" },
+  QUERY_TERM_MAPPING: { icon: Tags, className: "bg-pink-500/15 text-pink-300" },
+  SAMPLE_QUESTION: { icon: MessagesSquare, className: "bg-emerald-500/15 text-emerald-300" },
+  USER: { icon: User, className: "bg-orange-500/15 text-orange-300" }
 };
 
 // 操作类型使用语义化配色，与结果列的圆点样式区分开
@@ -149,29 +149,29 @@ const operationBadgeClass = (operationType?: string | null) => {
   switch (operationType) {
     case "CREATE":
     case "ENABLE":
-      return "border-[#b7eb8f] bg-[#f6ffed] text-[#52C41A]";
+      return "border-emerald-400/40 bg-emerald-500/15 text-emerald-300";
     case "UPDATE":
-      return "border-[#91d5ff] bg-[#e6f7ff] text-[#1890FF]";
+      return "border-violet-400/60 bg-violet-500/15 text-violet-300";
     case "DELETE":
-      return "border-[#ffa39e] bg-[#fff1f0] text-[#F5222D]";
+      return "border-red-400/40 bg-red-500/15 text-red-300";
     case "DISABLE":
-      return "border-[#d9d9d9] bg-[#fafafa] text-[#8c8c8c]";
+      return "border-white/10 bg-white/[0.04] text-zinc-400";
     case "RUN":
-      return "border-[#ffd591] bg-[#fff7e6] text-[#FA8C16]";
+      return "border-amber-400/40 bg-amber-500/15 text-amber-300";
     default:
-      return "border-slate-200 bg-slate-50 text-slate-600";
+      return "border-white/10 bg-white/[0.04] text-zinc-300";
   }
 };
 
 function BizTypeCell({ bizType }: { bizType?: string | null }) {
-  const meta = (bizType && BIZ_TYPE_META[bizType]) || { icon: Boxes, className: "bg-slate-100 text-slate-500" };
+  const meta = (bizType && BIZ_TYPE_META[bizType]) || { icon: Boxes, className: "bg-white/[0.04] text-zinc-400" };
   const Icon = meta.icon;
   return (
     <div className="flex items-center gap-2.5">
       <span className={cn("flex h-8 w-8 shrink-0 items-center justify-center rounded-lg", meta.className)}>
         <Icon className="h-[18px] w-[18px]" />
       </span>
-      <span className="font-medium text-slate-700">{labelOf(BIZ_TYPE_OPTIONS, bizType)}</span>
+      <span className="font-medium text-zinc-300">{labelOf(BIZ_TYPE_OPTIONS, bizType)}</span>
     </div>
   );
 }
@@ -211,18 +211,18 @@ const isExpandable = (value: unknown): boolean =>
 // 按 JSON 值类型着色的标量渲染
 function JsonScalar({ value }: { value: unknown }) {
   if (value === null || value === undefined) {
-    return <span className="italic text-slate-400">null</span>;
+    return <span className="italic text-zinc-500">null</span>;
   }
   if (typeof value === "string") {
-    return <span className="whitespace-pre-wrap break-all text-emerald-700">{value === "" ? '""' : value}</span>;
+    return <span className="whitespace-pre-wrap break-all text-emerald-300">{value === "" ? '""' : value}</span>;
   }
   if (typeof value === "number") {
-    return <span className="text-blue-600">{value}</span>;
+    return <span className="text-violet-300">{value}</span>;
   }
   if (typeof value === "boolean") {
-    return <span className="text-purple-600">{String(value)}</span>;
+    return <span className="text-purple-300">{String(value)}</span>;
   }
-  return <span className="text-slate-700">{String(value)}</span>;
+  return <span className="text-zinc-300">{String(value)}</span>;
 }
 
 // 常规 JSON 树渲染，键值分明、嵌套缩进，字段里内嵌的 JSON 字符串也会递归展开
@@ -233,13 +233,13 @@ function JsonView({ data }: { data: unknown }) {
   }
   if (Array.isArray(value)) {
     if (value.length === 0) {
-      return <span className="text-slate-400">[]</span>;
+      return <span className="text-zinc-500">[]</span>;
     }
     return (
-      <div className="space-y-1.5 border-l border-slate-200 pl-3">
+      <div className="space-y-1.5 border-l border-white/10 pl-3">
         {value.map((item, index) => (
           <div key={index} className="flex gap-2">
-            <span className="shrink-0 text-slate-400">{index}</span>
+            <span className="shrink-0 text-zinc-500">{index}</span>
             <div className="min-w-0 flex-1">
               <JsonView data={item} />
             </div>
@@ -250,7 +250,7 @@ function JsonView({ data }: { data: unknown }) {
   }
   const entries = Object.entries(value as Record<string, unknown>);
   if (entries.length === 0) {
-    return <span className="text-slate-400">{"{}"}</span>;
+    return <span className="text-zinc-500">{"{}"}</span>;
   }
   return (
     <div className="space-y-1.5">
@@ -258,7 +258,7 @@ function JsonView({ data }: { data: unknown }) {
         const nested = isExpandable(normalizeJsonValue(val));
         return (
           <div key={key} className={nested ? "space-y-1" : "flex gap-2"}>
-            <span className="shrink-0 font-medium text-slate-500">{key}</span>
+            <span className="shrink-0 font-medium text-zinc-400">{key}</span>
             <div className={nested ? "pl-3" : "min-w-0 flex-1"}>
               <JsonView data={val} />
             </div>
@@ -276,15 +276,15 @@ function ChangeDiffTable({ detail }: { detail: BizChangeLog | null }) {
   }, [detail?.changeDiff]);
 
   if (!detail) {
-    return <div className="py-8 text-center text-sm text-slate-500">请选择一条日志</div>;
+    return <div className="py-8 text-center text-sm text-zinc-400">请选择一条日志</div>;
   }
 
   if (diffItems.length === 0) {
-    return <div className="py-8 text-center text-sm text-slate-500">没有字段差异</div>;
+    return <div className="py-8 text-center text-sm text-zinc-400">没有字段差异</div>;
   }
 
   return (
-    <div className="max-h-[440px] overflow-auto rounded-lg border border-slate-200">
+    <div className="max-h-[440px] overflow-auto rounded-lg border border-white/10">
       <Table className="min-w-[760px]">
         <TableHeader>
           <TableRow>
@@ -296,7 +296,7 @@ function ChangeDiffTable({ detail }: { detail: BizChangeLog | null }) {
         <TableBody>
           {diffItems.map((item, index) => (
             <TableRow key={`${item.field || "field"}-${index}`}>
-              <TableCell className="font-mono text-xs text-slate-600">{item.field || "/"}</TableCell>
+              <TableCell className="font-mono text-xs text-zinc-300">{item.field || "/"}</TableCell>
               <TableCell className="max-w-[260px] break-words font-mono text-xs">
                 <JsonView data={item.before} />
               </TableCell>
@@ -332,9 +332,9 @@ function CopyButton({ value, label = "复制" }: { value: string; label?: string
       onClick={handleCopy}
       title={label}
       aria-label={label}
-      className="h-7 gap-1.5 px-2 text-xs text-slate-500 hover:text-slate-800"
+      className="h-7 gap-1.5 px-2 text-xs text-zinc-400 hover:text-zinc-100"
     >
-      {copied ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <Copy className="h-3.5 w-3.5" />}
+      {copied ? <Check className="h-3.5 w-3.5 text-emerald-300" /> : <Copy className="h-3.5 w-3.5" />}
       {copied ? "已复制" : label}
     </Button>
   );
@@ -357,7 +357,7 @@ function JsonCodeBlock({ value }: { value?: string | null }) {
 
   if (!text) {
     return (
-      <div className="rounded-lg border border-dashed border-slate-200 py-12 text-center text-sm text-slate-400">
+      <div className="rounded-lg border border-dashed border-white/10 py-12 text-center text-sm text-zinc-500">
         暂无快照数据
       </div>
     );
@@ -367,9 +367,9 @@ function JsonCodeBlock({ value }: { value?: string | null }) {
   const byteSize = new Blob([text]).size;
 
   return (
-    <div className="overflow-hidden rounded-lg border border-slate-200 bg-white">
-      <div className="flex items-center justify-between border-b border-slate-200 px-3 py-1.5">
-        <span className="font-mono text-[11px] font-medium text-slate-400">
+    <div className="overflow-hidden rounded-lg border border-white/10 bg-[#101a2e]">
+      <div className="flex items-center justify-between border-b border-white/10 px-3 py-1.5">
+        <span className="font-mono text-[11px] font-medium text-zinc-500">
           {"{}"} JSON · {lineCount} 行 · {formatBytes(byteSize)}
         </span>
         <CopyButton value={text} />
@@ -377,7 +377,7 @@ function JsonCodeBlock({ value }: { value?: string | null }) {
       <div className="max-h-[440px] overflow-auto">
         <SyntaxHighlighter
           language="json"
-          style={oneLight}
+          style={oneDark}
           PreTag="div"
           showLineNumbers
           customStyle={{
@@ -411,11 +411,11 @@ function ContextPanel({ detail }: { detail: BizChangeLog | null }) {
     ["User-Agent", detail.userAgent || "-"]
   ];
   return (
-    <div className="grid gap-2 rounded-lg border border-slate-200 p-4 text-sm">
+    <div className="grid gap-2 rounded-lg border border-white/10 p-4 text-sm">
       {rows.map(([label, value]) => (
         <div key={label} className="grid grid-cols-[96px_1fr] gap-3">
-          <span className="text-slate-500">{label}</span>
-          <span className="min-w-0 break-words font-medium text-slate-800">{value}</span>
+          <span className="text-zinc-400">{label}</span>
+          <span className="min-w-0 break-words font-medium text-zinc-300">{value}</span>
         </div>
       ))}
     </div>
@@ -504,7 +504,7 @@ export function BizChangeLogPage() {
         </div>
       </div>
 
-      <div className="rounded-xl border border-slate-200 bg-white p-3">
+      <div className="rounded-xl border border-white/10 bg-[#101a2e] p-3">
         <div className="flex flex-col gap-2 lg:flex-row lg:flex-wrap lg:items-center">
           <Select
             value={filters.bizType || ALL_VALUE}
@@ -562,21 +562,21 @@ export function BizChangeLogPage() {
             onKeyDown={(event) => event.key === "Enter" && handleSearch()}
             placeholder="操作人"
           />
-          <div className="flex h-10 items-center rounded-md border border-slate-200 bg-white px-2 transition-colors focus-within:border-slate-300">
+          <div className="flex h-10 items-center rounded-md border border-white/10 bg-[#101a2e] px-2 transition-colors focus-within:border-white/20">
             <input
               type="date"
               value={filters.beginTime}
               max={filters.endTime || undefined}
               onChange={(event) => setFilters((prev) => ({ ...prev, beginTime: event.target.value }))}
-              className="w-[116px] bg-transparent px-1 text-sm text-slate-600 focus:outline-none"
+              className="w-[116px] bg-transparent px-1 text-sm text-zinc-300 focus:outline-none"
             />
-            <span className="px-0.5 text-slate-300">~</span>
+            <span className="px-0.5 text-zinc-500">~</span>
             <input
               type="date"
               value={filters.endTime}
               min={filters.beginTime || undefined}
               onChange={(event) => setFilters((prev) => ({ ...prev, endTime: event.target.value }))}
-              className="w-[116px] bg-transparent px-1 text-sm text-slate-600 focus:outline-none"
+              className="w-[116px] bg-transparent px-1 text-sm text-zinc-300 focus:outline-none"
             />
           </div>
           <div className="flex items-center gap-2">
@@ -584,7 +584,7 @@ export function BizChangeLogPage() {
               <Search className="mr-1.5 h-4 w-4" />
               查询
             </Button>
-            <Button variant="outline" className="h-10 border-slate-200 px-4" onClick={handleReset}>
+            <Button variant="outline" className="h-10 border-white/10 px-4" onClick={handleReset}>
               重置
             </Button>
           </div>
@@ -608,41 +608,41 @@ export function BizChangeLogPage() {
                   <TableHead className="w-[140px]">操作人</TableHead>
                   <TableHead className="w-[90px]">结果</TableHead>
                   <TableHead className="w-[150px]">时间</TableHead>
-                  <TableHead className="sticky right-0 z-20 w-[168px] bg-[#F9FAFB] text-left shadow-[-1px_0_0_rgba(226,232,240,1)]">
+                  <TableHead className="sticky right-0 z-20 w-[168px] bg-[#0d1424] text-left shadow-[-1px_0_0_rgba(255,255,255,0.1)]">
                     详情
                   </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {records.map((item) => (
-                  <TableRow key={item.id} className="group text-[13px] hover:!bg-slate-50">
+                  <TableRow key={item.id} className="group text-[13px] hover:!bg-white/10">
                     <TableCell>
                       <BizTypeCell bizType={item.bizType} />
                     </TableCell>
-                    <TableCell className="font-mono text-xs text-slate-600">{item.bizId}</TableCell>
+                    <TableCell className="font-mono text-xs text-zinc-300">{item.bizId}</TableCell>
                     <TableCell>
                       <Badge variant="outline" className={cn("font-medium", operationBadgeClass(item.operationType))}>
                         {labelOf(OPERATION_OPTIONS, item.operationType)}
                       </Badge>
                     </TableCell>
-                    <TableCell className="max-w-[320px] truncate text-slate-700" title={item.actionDesc || ""}>
+                    <TableCell className="max-w-[320px] truncate text-zinc-300" title={item.actionDesc || ""}>
                       {item.actionDesc || "-"}
                     </TableCell>
                     <TableCell>
-                      <span className="block truncate text-slate-700" title={item.operatorName || item.operatorId || ""}>
+                      <span className="block truncate text-zinc-300" title={item.operatorName || item.operatorId || ""}>
                         {item.operatorName || item.operatorId || "-"}
                       </span>
                     </TableCell>
                     <TableCell>
                       <span className="inline-flex items-center gap-1.5">
-                        <span className={cn("h-1.5 w-1.5 rounded-full", item.success ? "bg-[#52C41A]" : "bg-[#F5222D]")} />
-                        <span className="text-slate-700">{item.success ? "成功" : "失败"}</span>
+                        <span className={cn("h-1.5 w-1.5 rounded-full", item.success ? "bg-emerald-500" : "bg-red-500")} />
+                        <span className="text-zinc-300">{item.success ? "成功" : "失败"}</span>
                       </span>
                     </TableCell>
                     <TableCell>
                       <RelativeTime value={item.createTime} />
                     </TableCell>
-                    <TableCell className="sticky right-0 z-10 bg-white shadow-[-1px_0_0_rgba(226,232,240,1)] group-hover:bg-slate-50">
+                    <TableCell className="sticky right-0 z-10 bg-[#101a2e] shadow-[-1px_0_0_rgba(255,255,255,0.1)] group-hover:bg-[#283143]">
                       <div className="flex items-center gap-2">
                         <Button
                           size="sm"
@@ -675,7 +675,7 @@ export function BizChangeLogPage() {
       </Card>
 
       {pageData && total > 0 ? (
-        <div className="mt-4 flex flex-wrap items-center justify-between gap-2 text-sm text-slate-500">
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-2 text-sm text-zinc-400">
           <span>
             共 {total} 条，显示 {rangeStart}-{rangeEnd}
           </span>
@@ -732,7 +732,7 @@ export function BizChangeLogPage() {
         <DialogContent className="max-w-[980px] max-h-[85vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <ShieldCheck className="h-5 w-5 text-indigo-500" />
+              <ShieldCheck className="h-5 w-5 text-violet-300" />
               审计详情
             </DialogTitle>
             <DialogDescription>
@@ -740,16 +740,16 @@ export function BizChangeLogPage() {
             </DialogDescription>
           </DialogHeader>
           {detailLoading ? (
-            <div className="py-10 text-center text-sm text-slate-500">加载中...</div>
+            <div className="py-10 text-center text-sm text-zinc-400">加载中...</div>
           ) : (
             <div className="space-y-4">
               {detail && detail.success === false ? (
-                <div className="flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+                <div className="flex items-start gap-2 rounded-lg border border-red-400/40 bg-red-500/15 px-3 py-2 text-sm text-red-300">
                   <XCircle className="mt-0.5 h-4 w-4 shrink-0" />
                   <span className="min-w-0 break-words">{detail.errorMessage || "操作失败"}</span>
                 </div>
               ) : null}
-              <div className="inline-flex items-center gap-1 rounded-lg bg-slate-100 p-1">
+              <div className="inline-flex items-center gap-1 rounded-lg bg-white/[0.04] p-1">
                 {[
                   { key: "diff", label: "差异" },
                   { key: "before", label: "变更前" },
@@ -762,8 +762,8 @@ export function BizChangeLogPage() {
                     onClick={() => setDetailTab(tab.key as DetailTab)}
                     className={
                       detailTab === tab.key
-                        ? "rounded-md bg-white px-3 py-1.5 text-sm font-medium text-slate-900 shadow-sm"
-                        : "rounded-md px-3 py-1.5 text-sm font-medium text-slate-500 transition-colors hover:text-slate-800"
+                        ? "rounded-md bg-white/10 px-3 py-1.5 text-sm font-medium text-zinc-100 shadow-sm"
+                        : "rounded-md px-3 py-1.5 text-sm font-medium text-zinc-400 transition-colors hover:text-zinc-100"
                     }
                   >
                     {tab.label}

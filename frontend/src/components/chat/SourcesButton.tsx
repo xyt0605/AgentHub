@@ -26,8 +26,8 @@ export function SourcesButton({ messageId, sources }: SourcesButtonProps) {
       className={cn(
         "inline-flex items-center gap-1.5 rounded-full py-1 pl-1.5 pr-2.5 text-xs transition-colors",
         active
-          ? "bg-[#F0F0F1] text-[#1A1A1A]"
-          : "text-[#666666] hover:bg-[#F0F0F1] hover:text-[#1A1A1A]"
+          ? "bg-white/10 text-zinc-100"
+          : "text-zinc-400 hover:bg-white/10 hover:text-zinc-100"
       )}
     >
       <span className="flex items-center">
@@ -35,7 +35,7 @@ export function SourcesButton({ messageId, sources }: SourcesButtonProps) {
           <span
             key={`${source.docId}-${idx}`}
             className={cn(
-              "flex h-5 w-5 items-center justify-center rounded-md bg-white ring-1 ring-[#EAEAEA]",
+              "flex h-5 w-5 items-center justify-center rounded-md bg-[#101a2e] ring-1 ring-[#EAEAEA]",
               idx > 0 && "-ml-1.5"
             )}
           >

@@ -27,7 +27,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Data
 @Configuration
-@ConfigurationProperties(prefix = "ragent.engine")
+@ConfigurationProperties(prefix = "agenthub.engine")
 public class OrchestrationProperties {
 
     /**

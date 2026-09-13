@@ -15,26 +15,16 @@
  * limitations under the License.
  */
 
-package com.nageoffer.ai.ragent.audit.service.impl;
+package com.nageoffer.ai.ragent;
 
-import com.mzt.logapi.beans.Operator;
-import com.mzt.logapi.service.IOperatorGetService;
-import com.nageoffer.ai.ragent.framework.context.UserContext;
-import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
 
-@Component
-public class RagentOperatorGetService implements IOperatorGetService {
+@SpringBootTest
+class AgenthubCoreApplicationTests {
 
-    private static final String SYSTEM_OPERATOR = "SYSTEM";
-
-    @Override
-    public Operator getUser() {
-        String userId = UserContext.getUserId();
-        if (StringUtils.hasText(userId)) {
-            return new Operator(userId);
-        }
-        String username = UserContext.getUsername();
-        return new Operator(StringUtils.hasText(username) ? username : SYSTEM_OPERATOR);
+    @Test
+    void contextLoads() {
     }
+
 }

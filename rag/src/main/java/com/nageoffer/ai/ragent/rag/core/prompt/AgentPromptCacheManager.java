@@ -39,7 +39,7 @@ public class AgentPromptCacheManager {
     private final StringRedisTemplate stringRedisTemplate;
     private final ObjectMapper objectMapper;
 
-    private static final String CACHE_KEY = "ragent:agent:resolved-prompts";
+    private static final String CACHE_KEY = "agenthub:agent:resolved-prompts";
 
     private static final long CACHE_EXPIRE_HOURS = 1;
 

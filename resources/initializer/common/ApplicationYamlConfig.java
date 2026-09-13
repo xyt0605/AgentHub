@@ -25,7 +25,7 @@ final class ApplicationYamlConfig {
 
     static Properties load(Path file) throws IOException {
         if (!Files.isRegularFile(file)) {
-            throw new IllegalArgumentException("RagentAI application.yaml 不存在: " + file);
+            throw new IllegalArgumentException("AgenthubAI application.yaml 不存在: " + file);
         }
         Map<String, String> yaml = readScalarValues(file);
         Properties result = new Properties();

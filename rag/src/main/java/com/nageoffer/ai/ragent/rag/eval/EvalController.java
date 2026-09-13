@@ -50,7 +50,7 @@ import java.util.stream.Collectors;
  */
 @RestController
 @RequiredArgsConstructor
-@ConditionalOnProperty(prefix = "ragent.eval", name = "enabled", havingValue = "true")
+@ConditionalOnProperty(prefix = "agenthub.eval", name = "enabled", havingValue = "true")
 public class EvalController {
 
     private final QueryRewriteService queryRewriteService;

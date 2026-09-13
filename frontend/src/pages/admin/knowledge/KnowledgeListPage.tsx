@@ -197,13 +197,13 @@ export function KnowledgeListPage() {
     if (!model) return "-";
     const parts = model.split("-");
     if (parts.length < 2) {
-      return <span className="text-sm text-slate-700">{model}</span>;
+      return <span className="text-sm text-zinc-300">{model}</span>;
     }
     const head = parts.slice(0, -1).join("-");
     const tail = parts[parts.length - 1];
     return (
-      <div className="flex flex-col text-xs text-slate-500">
-        <span className="font-medium text-slate-700">{head}</span>
+      <div className="flex flex-col text-xs text-zinc-400">
+        <span className="font-medium text-zinc-300">{head}</span>
         <span>{tail}</span>
       </div>
     );
@@ -212,12 +212,12 @@ export function KnowledgeListPage() {
   const getCollectionBadgeClass = (name?: string) => {
     const value = (name || "").toLowerCase();
     if (value.includes("biz")) {
-      return "border-blue-200 bg-blue-50 text-blue-700";
+      return "border-violet-400/40 bg-violet-500/15 text-violet-300";
     }
     if (value.includes("group")) {
-      return "border-purple-200 bg-purple-50 text-purple-700";
+      return "border-purple-400/40 bg-purple-500/15 text-purple-300";
     }
-    return "border-slate-200 bg-slate-100 text-slate-600";
+    return "border-white/10 bg-white/[0.04] text-zinc-300";
   };
 
   const handleRename = async () => {
@@ -421,7 +421,7 @@ export function KnowledgeListPage() {
       </Dialog>
 
       {pageData ? (
-        <div className="mt-4 flex flex-wrap items-center justify-between gap-2 text-sm text-slate-500">
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-2 text-sm text-zinc-400">
           <span>共 {pageData.total} 条</span>
           <div className="flex items-center gap-2">
             <Button

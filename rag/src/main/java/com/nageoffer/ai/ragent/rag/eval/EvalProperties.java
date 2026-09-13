@@ -25,11 +25,11 @@ import org.springframework.stereotype.Component;
  * 评测模式配置
  * <p>
  * 用途：控制评测专用接口（/rag/eval/sync）和 AOP 切面是否启用
- * 生产环境默认 false，评测环境通过 -Dragent.eval.enabled=true 或独立 profile 开启
+ * 生产环境默认 false，评测环境通过 -Dagenthub.eval.enabled=true 或独立 profile 开启
  */
 @Data
 @Component
-@ConfigurationProperties(prefix = "ragent.eval")
+@ConfigurationProperties(prefix = "agenthub.eval")
 public class EvalProperties {
 
     /**

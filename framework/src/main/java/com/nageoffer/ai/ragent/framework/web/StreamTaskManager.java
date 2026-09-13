@@ -42,8 +42,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Component
 public class StreamTaskManager {
 
-    private static final String CANCEL_TOPIC = "ragent:stream:cancel";
-    private static final String CANCEL_KEY_PREFIX = "ragent:stream:cancel:";
+    private static final String CANCEL_TOPIC = "agenthub:stream:cancel";
+    private static final String CANCEL_KEY_PREFIX = "agenthub:stream:cancel:";
     private static final Duration CANCEL_TTL = Duration.ofMinutes(30);
 
     private final Cache<String, StreamTaskInfo> tasks = CacheBuilder.newBuilder()

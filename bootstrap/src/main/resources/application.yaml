@@ -1,11 +1,11 @@
 server:
   port: 9090
   servlet:
-    context-path: /api/ragent
+    context-path: /api/agenthub
 
 spring:
   application:
-    name: ragent${unique-name:}-service
+    name: agenthub${unique-name:}-service
 
   servlet:
     multipart:
@@ -24,7 +24,7 @@ spring:
       max-lifetime: 1800000
       maximum-pool-size: 10
       minimum-idle: 5
-      pool-name: RagentHikariPool
+      pool-name: AgenthubHikariPool
 
   data:
     redis:
@@ -35,17 +35,17 @@ spring:
 rocketmq:
   name-server: 127.0.0.1:9876
   producer:
-    group: ragent-producer${unique-name:}_pg
+    group: agenthub-producer${unique-name:}_pg
     send-message-timeout: 2000
 
-ragent:
+agenthub:
   engine:
     type: workflow  # 执行架构档位，可选 workflow（v1 编排管线）/ agent（v2 ReAct 架构，RAG 管线降级为主 Agent 的一个 Tool）
   demo-mode: false
   eval:
     enabled: true
 
-# Agent 执行架构（ragent.engine.type=agent 时生效）；单模型无 fallback，供应商可用性由 provider 侧保障
+# Agent 执行架构（agenthub.engine.type=agent 时生效）；单模型无 fallback，供应商可用性由 provider 侧保障
 agent:
   chat:
     provider: bailian   # 引用 ai.providers 下的供应商，取其 url / api-key / endpoints.chat

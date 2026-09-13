@@ -6,7 +6,7 @@ import { BizChangeLogPage } from "@/pages/admin/change-logs/BizChangeLogPage";
 
 export function ChangeLogsPage() {
   return (
-    <div className="admin-layout min-h-screen bg-slate-50">
+    <div className="admin-layout min-h-screen bg-[#070b14]">
       <div className="admin-main min-h-screen">
         <header className="admin-topbar">
           <div className="admin-topbar-inner">
@@ -18,8 +18,8 @@ export function ChangeLogsPage() {
                 </Button>
               </Link>
               <div>
-                <div className="text-sm font-semibold text-slate-900">Ragent AI</div>
-                <div className="text-xs text-slate-500">业务变更审计</div>
+                <div className="text-sm font-semibold text-zinc-100">Agenthub</div>
+                <div className="text-xs text-zinc-400">业务变更审计</div>
               </div>
             </div>
             <Link to="/chat">

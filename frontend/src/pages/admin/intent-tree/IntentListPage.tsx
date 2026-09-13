@@ -62,9 +62,9 @@ const KIND_OPTIONS = [
 ];
 
 const FILTER_SELECT_TRIGGER_CLASS =
-  "h-10 text-sm border-slate-200 focus:ring-0 focus:ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0 data-[state=open]:border-slate-200 data-[state=open]:ring-0";
+  "h-10 text-sm border-white/10 focus:ring-0 focus:ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0 data-[state=open]:border-white/10 data-[state=open]:ring-0";
 const FILTER_INPUT_CLASS =
-  "h-10 border-slate-200 pl-10 text-sm focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-slate-200";
+  "h-10 border-white/10 pl-10 text-sm focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-white/10";
 
 type FlatIntentNode = {
   id: number;
@@ -156,10 +156,10 @@ const resolveKindBadge = (value: number) => {
 };
 
 const resolveLevelBadgeClass = (value: number) => {
-  if (value === 0) return "border-[#91d5ff] bg-[#e6f7ff] text-[#1890FF]";
-  if (value === 1) return "border-[#b7eb8f] bg-[#f6ffed] text-[#52C41A]";
-  if (value === 2) return "border-[#ffd591] bg-[#fff7e6] text-[#FA8C16]";
-  return "border-slate-200 bg-slate-50 text-slate-600";
+  if (value === 0) return "border-violet-400/60 bg-violet-500/15 text-violet-300";
+  if (value === 1) return "border-emerald-400/40 bg-emerald-500/15 text-emerald-300";
+  if (value === 2) return "border-amber-400/40 bg-amber-500/15 text-amber-300";
+  return "border-white/10 bg-white/[0.04] text-zinc-300";
 };
 
 export function IntentListPage() {
@@ -374,10 +374,10 @@ export function IntentListPage() {
       </div>
 
       <div className="space-y-3">
-        <div className="rounded-xl border border-slate-200 bg-white p-3">
+        <div className="rounded-xl border border-white/10 bg-[#101a2e] p-3">
           <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
             <div className="relative w-full lg:min-w-[280px] lg:max-w-[420px] lg:flex-1">
-              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
               <Input
                 value={keyword}
                 onChange={(event) => {
@@ -474,7 +474,7 @@ export function IntentListPage() {
 
               <Button
                 variant="outline"
-                className="h-10 gap-1.5 border-slate-200 px-3 text-sm"
+                className="h-10 gap-1.5 border-white/10 px-3 text-sm"
                 onClick={loadIntentTree}
                 disabled={loading}
               >
@@ -483,7 +483,7 @@ export function IntentListPage() {
               </Button>
               <Button
                 variant="outline"
-                className="h-10 gap-1.5 border-rose-200 bg-rose-50 px-3 text-sm font-medium text-rose-700 hover:bg-rose-100 hover:text-rose-800"
+                className="h-10 gap-1.5 border-rose-400/40 bg-rose-500/15 px-3 text-sm font-medium text-rose-300 hover:bg-rose-500/150/20 hover:text-rose-300"
                 onClick={handleResetFilters}
               >
                 <X className="h-4 w-4" />
@@ -498,8 +498,8 @@ export function IntentListPage() {
         <CardContent className="space-y-3 pt-4">
           {selectedRows.length > 0 ? (
             <div className="-mx-6">
-              <div className="flex flex-wrap items-center justify-between gap-2 rounded-none border-y border-slate-200/80 bg-slate-50 px-6 py-2">
-                <span className="text-sm font-medium text-slate-700">已选 {selectedRows.length} 项</span>
+              <div className="flex flex-wrap items-center justify-between gap-2 rounded-none border-y border-white/10 bg-white/[0.04] px-6 py-2">
+                <span className="text-sm font-medium text-zinc-300">已选 {selectedRows.length} 项</span>
                 <div className="flex flex-wrap items-center gap-2">
                   <Button
                     size="sm"
@@ -580,7 +580,7 @@ export function IntentListPage() {
                   <TableHead className="w-[220px]">关联资源</TableHead>
                   <TableHead className="w-[90px]">示例数</TableHead>
                   <TableHead className="w-[90px]">状态</TableHead>
-                  <TableHead className="sticky right-0 z-20 w-[180px] bg-[#F9FAFB] text-left shadow-[-1px_0_0_rgba(226,232,240,1)]">
+                  <TableHead className="sticky right-0 z-20 w-[180px] bg-[#0d1424] text-left shadow-[-1px_0_0_rgba(255,255,255,0.1)]">
                     操作
                   </TableHead>
                 </TableRow>
@@ -589,7 +589,7 @@ export function IntentListPage() {
                 {pageRows.map((row) => (
                   <TableRow
                     key={row.id}
-                    className="group text-[13px] hover:!bg-slate-50"
+                    className="group text-[13px] hover:!bg-white/10"
                   >
                     <TableCell>
                       <Checkbox
@@ -602,8 +602,8 @@ export function IntentListPage() {
                     <TableCell>
                       <div className="space-y-0.5">
                         <div className="flex items-center gap-2">
-                          <span className="font-semibold text-slate-900">{row.name}</span>
-                          <span className="rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 font-mono text-xs text-slate-600">
+                          <span className="font-semibold text-zinc-100">{row.name}</span>
+                          <span className="rounded-full border border-white/10 bg-white/[0.04] px-2 py-0.5 font-mono text-xs text-zinc-300">
                             {row.intentCode}
                           </span>
                         </div>
@@ -623,14 +623,14 @@ export function IntentListPage() {
                       <div className="flex flex-wrap items-center gap-1">
                         {row.pathNames.map((segment, index) => (
                           <span key={`${row.id}-${segment}-${index}`} className="inline-flex items-center gap-1">
-                            {index > 0 ? <span className="text-slate-300">/</span> : null}
+                            {index > 0 ? <span className="text-zinc-500">/</span> : null}
                             <button
                               type="button"
                               className={cn(
                                 "rounded px-1.5 py-0.5 text-xs transition-colors",
                                 index === row.pathNames.length - 1
-                                  ? "bg-slate-100 text-slate-600 font-medium hover:bg-slate-200"
-                                  : "text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+                                  ? "bg-white/10 text-zinc-300 font-medium hover:bg-white/15"
+                                  : "text-zinc-500 hover:bg-white/10 hover:text-zinc-200"
                               )}
                               onClick={() =>
                                 navigate(
@@ -648,7 +648,7 @@ export function IntentListPage() {
                       <div className="space-y-1">
                         {row.kind === 0 ? (
                           resolveCollections(row).length === 0 ? (
-                            <span className="text-sm text-slate-400">-</span>
+                            <span className="text-sm text-zinc-500">-</span>
                           ) : (
                             <div
                               className="flex flex-wrap items-center gap-1"
@@ -666,7 +666,7 @@ export function IntentListPage() {
                                   </Badge>
                                 ))}
                               {resolveCollections(row).length > 2 ? (
-                                <Badge variant="outline" className="font-normal text-slate-500">
+                                <Badge variant="outline" className="font-normal text-zinc-400">
                                   +{resolveCollections(row).length - 2}
                                 </Badge>
                               ) : null}
@@ -674,32 +674,32 @@ export function IntentListPage() {
                           )
                         ) : (
                           <div
-                            className="truncate text-sm text-slate-700"
+                            className="truncate text-sm text-zinc-300"
                             title={resolveResourceText(row)}
                           >
                             {resolveResourceText(row)}
                           </div>
                         )}
-                        <p className="text-xs text-slate-400">TopK: {row.topK ?? "全局默认"}</p>
+                        <p className="text-xs text-zinc-500">TopK: {row.topK ?? "全局默认"}</p>
                       </div>
                     </TableCell>
                     <TableCell>
-                      <span className="font-medium text-slate-700">{row.exampleCount}</span>
+                      <span className="font-medium text-zinc-300">{row.exampleCount}</span>
                     </TableCell>
                     <TableCell>
                       <Badge
                         variant={row.enabled === 0 ? "secondary" : "default"}
                         className={cn(
                           row.enabled === 0
-                            ? "border-[#d9d9d9] bg-[#fafafa] text-[#8c8c8c] font-semibold"
-                            : "border-[#b7eb8f] bg-[#f6ffed] text-[#52C41A] font-semibold"
+                            ? "border-white/10 bg-white/[0.04] text-zinc-400 font-semibold"
+                            : "border-emerald-400/40 bg-emerald-500/15 text-emerald-300 font-semibold"
                         )}
                       >
                         {row.enabled === 0 ? "禁用" : "启用"}
                       </Badge>
                     </TableCell>
                     <TableCell
-                      className="sticky right-0 z-10 bg-white shadow-[-1px_0_0_rgba(226,232,240,1)] group-hover:bg-slate-50"
+                      className="sticky right-0 z-10 bg-[#101a2e] shadow-[-1px_0_0_rgba(255,255,255,0.1)] group-hover:bg-[#283143]"
                     >
                       <div className="flex items-center gap-2">
                         <Button
@@ -745,7 +745,7 @@ export function IntentListPage() {
       </Card>
 
       {showPagination ? (
-        <div className="mt-4 flex flex-wrap items-center justify-between gap-2 text-sm text-slate-500">
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-2 text-sm text-zinc-400">
           <span>
             共 {total} 条，显示 {rangeStart}-{rangeEnd}
           </span>

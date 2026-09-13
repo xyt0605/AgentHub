@@ -62,10 +62,10 @@ const copyToClipboard = (text: string, label: string) => {
 type StatusType = "success" | "failed" | "running" | "default";
 
 const STATUS_COLORS: Record<StatusType, { dot: string; bar: string }> = {
-  success: { dot: "bg-emerald-500", bar: "bg-emerald-400" },
-  failed: { dot: "bg-red-500", bar: "bg-red-400" },
-  running: { dot: "bg-amber-500", bar: "bg-amber-400" },
-  default: { dot: "bg-slate-300", bar: "bg-slate-300" }
+  success: { dot: "bg-emerald-500/150", bar: "bg-emerald-400" },
+  failed: { dot: "bg-red-500/150", bar: "bg-red-400" },
+  running: { dot: "bg-amber-500/150", bar: "bg-amber-400" },
+  default: { dot: "bg-white/20", bar: "bg-white/20" }
 };
 
 const getStatusColors = (status?: string | null) => {
@@ -87,18 +87,18 @@ function MetricItem({
   variant?: "default" | "success" | "error" | "warning" | "primary";
 }) {
   const styles = {
-    default: "text-slate-600",
-    success: "text-emerald-600",
-    error: "text-red-600",
-    warning: "text-amber-600",
-    primary: "text-blue-600"
+    default: "text-zinc-300",
+    success: "text-emerald-300",
+    error: "text-red-300",
+    warning: "text-amber-300",
+    primary: "text-violet-300"
   };
 
   return (
       <div className="flex items-center gap-2 px-4 py-2">
         <Icon className={cn("h-4 w-4", styles[variant])} />
         <span className={cn("text-lg font-semibold", styles[variant])}>{value}</span>
-        <span className="text-xs text-slate-500">{label}</span>
+        <span className="text-xs text-zinc-400">{label}</span>
       </div>
   );
 }
@@ -106,15 +106,15 @@ function MetricItem({
 function TimeScale({ totalMs }: { totalMs: number }) {
   const ticks = [0, 25, 50, 75, 100];
   return (
-      <div className="relative h-6 border-b border-slate-200">
+      <div className="relative h-6 border-b border-white/10">
         {ticks.map((percent) => (
             <div
                 key={percent}
                 className="absolute top-0 bottom-0 flex flex-col items-center"
                 style={{ left: `${percent}%`, transform: "translateX(-50%)" }}
             >
-              <div className="w-px h-2 bg-slate-300" />
-              <span className="text-[10px] text-slate-400 mt-0.5">
+              <div className="w-px h-2 bg-white/20" />
+              <span className="text-[10px] text-zinc-500 mt-0.5">
             {formatDuration((totalMs * percent) / 100)}
           </span>
             </div>
@@ -155,10 +155,10 @@ function WaterfallRow({
           onClick={onSelect}
           className={cn(
               "grid grid-cols-[minmax(180px,1fr)_120px_2fr_100px] gap-4 px-4 py-2.5 transition-colors group",
-              clickable && "cursor-pointer hover:bg-slate-50/80",
-              isRoot && "bg-indigo-50/40 border-b border-indigo-100",
-              isTopSlowest && !isSelected && !isRoot && "bg-amber-50/40",
-              isSelected && "bg-blue-50/60 ring-1 ring-inset ring-blue-200"
+              clickable && "cursor-pointer hover:bg-white/10",
+              isRoot && "bg-violet-500/10 border-b border-violet-400/40",
+              isTopSlowest && !isSelected && !isRoot && "bg-amber-500/150/15",
+              isSelected && "bg-violet-500/10 ring-1 ring-inset ring-violet-400/50"
           )}
       >
         <div className="flex items-center gap-1.5 min-w-0">
@@ -170,7 +170,7 @@ function WaterfallRow({
                       <span
                           key={idx}
                           className={cn(
-                              "w-4 border-slate-200",
+                              "w-4 border-white/10",
                               "border-l",
                               isLast && "border-b"
                           )}
@@ -187,7 +187,7 @@ function WaterfallRow({
           <span
               className={cn(
                   "truncate",
-                  isRoot ? "text-sm font-semibold text-indigo-900" : "text-sm text-slate-700"
+                  isRoot ? "text-sm font-semibold text-violet-200" : "text-sm text-zinc-300"
               )}
               title={nodeDisplayName}
           >
@@ -208,11 +208,11 @@ function WaterfallRow({
         </div>
 
         <div className="flex items-center">
-          <div className="relative w-full h-6 bg-slate-50 rounded overflow-hidden">
+          <div className="relative w-full h-6 bg-white/[0.04] rounded overflow-hidden">
             {[25, 50, 75].map(p => (
                 <div
                     key={p}
-                    className="absolute top-0 bottom-0 w-px bg-slate-200"
+                    className="absolute top-0 bottom-0 w-px bg-white/10"
                     style={{ left: `${p}%` }}
                 />
             ))}
@@ -233,10 +233,10 @@ function WaterfallRow({
         </div>
 
         <div className="text-right">
-          <p className="text-sm font-medium text-slate-700">
+          <p className="text-sm font-medium text-zinc-300">
             {formatDuration(node.resolvedDurationMs)}
           </p>
-          <p className="text-[10px] text-slate-400">
+          <p className="text-[10px] text-zinc-500">
             @{formatDuration(node.offsetMs)}
           </p>
         </div>
@@ -260,7 +260,7 @@ function NodeDetailCard({
         <CardHeader className="py-3 px-4">
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2 min-w-0">
-              <CardTitle className="text-sm font-medium text-slate-700 truncate" title={displayName}>
+              <CardTitle className="text-sm font-medium text-zinc-300 truncate" title={displayName}>
                 {displayName}
               </CardTitle>
               <Badge variant={statusBadgeVariant(node.status)} className="text-xs">
@@ -277,7 +277,7 @@ function NodeDetailCard({
                 variant="ghost"
                 size="sm"
                 onClick={onClose}
-                className="h-7 px-2 text-slate-500 hover:text-slate-800"
+                className="h-7 px-2 text-zinc-400 hover:text-zinc-100"
             >
               <X className="h-4 w-4" />
             </Button>
@@ -295,18 +295,18 @@ function NodeDetailCard({
             {node.methodName && <DetailField label="方法" value={node.methodName} mono />}
           </div>
           {node.errorMessage && (
-              <div className="flex items-start gap-2 p-3 bg-red-50 border border-red-200 rounded-lg">
+              <div className="flex items-start gap-2 p-3 bg-red-500/15 border border-red-400/40 rounded-lg">
                 <AlertTriangle className="h-4 w-4 text-red-500 shrink-0 mt-0.5" />
                 <div className="text-xs">
-                  <p className="font-medium text-red-800 mb-1">错误信息</p>
-                  <p className="text-red-700 whitespace-pre-wrap break-all">{node.errorMessage}</p>
+                  <p className="font-medium text-red-300 mb-1">错误信息</p>
+                  <p className="text-red-300 whitespace-pre-wrap break-all">{node.errorMessage}</p>
                 </div>
               </div>
           )}
           {node.extraData && (
               <div>
-                <p className="text-xs font-medium text-slate-500 mb-1">额外数据</p>
-                <pre className="text-xs bg-slate-50 border border-slate-200 rounded p-2 overflow-x-auto whitespace-pre-wrap break-all text-slate-700">
+                <p className="text-xs font-medium text-zinc-400 mb-1">额外数据</p>
+                <pre className="text-xs bg-white/[0.04] border border-white/10 rounded p-2 overflow-x-auto whitespace-pre-wrap break-all text-zinc-300">
                   {tryPrettyJson(node.extraData)}
                 </pre>
               </div>
@@ -330,19 +330,19 @@ function DetailField({
   highlight?: "primary" | "error";
 }) {
   const highlightClass = highlight === "error"
-      ? "text-red-600 font-medium"
+      ? "text-red-300 font-medium"
       : highlight === "primary"
-          ? "text-blue-600 font-medium"
-          : "text-slate-700";
+          ? "text-violet-300 font-medium"
+          : "text-zinc-300";
   return (
       <div className="flex items-center gap-2 min-w-0">
-        <span className="text-slate-500 shrink-0">{label}</span>
+        <span className="text-zinc-400 shrink-0">{label}</span>
         <span
             className={cn(
                 "truncate",
                 mono && "font-mono",
                 highlightClass,
-                copyable && "cursor-pointer hover:text-blue-600 transition-colors"
+                copyable && "cursor-pointer hover:text-violet-200 transition-colors"
             )}
             title={value}
             onClick={copyable ? () => copyToClipboard(value, label) : undefined}
@@ -350,7 +350,7 @@ function DetailField({
           {value}
         </span>
         {copyable && (
-            <Copy className="h-3 w-3 text-slate-300 shrink-0" />
+            <Copy className="h-3 w-3 text-zinc-500 shrink-0" />
         )}
       </div>
   );
@@ -550,7 +550,7 @@ export function RagTraceDetailPage() {
   if (detailLoading) {
     return (
         <div className="min-h-[400px] flex items-center justify-center">
-          <div className="flex flex-col items-center gap-3 text-slate-500">
+          <div className="flex flex-col items-center gap-3 text-zinc-400">
             <Loader2 className="h-8 w-8 animate-spin" />
             <p>加载链路详情中...</p>
           </div>
@@ -563,17 +563,17 @@ export function RagTraceDetailPage() {
         <div className="space-y-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-1.5 text-sm">
-              <Link to="/admin/traces" className="text-slate-500 hover:text-slate-700">
+              <Link to="/admin/traces" className="text-zinc-400 hover:text-zinc-200">
                 链路追踪
               </Link>
-              <span className="text-slate-300">/</span>
-              <span className="text-slate-400">详情</span>
+              <span className="text-zinc-500">/</span>
+              <span className="text-zinc-500">详情</span>
             </div>
             <Button
                 asChild
                 variant="outline"
                 size="sm"
-                className="text-slate-600 hover:text-slate-800"
+                className="text-zinc-300 hover:text-zinc-100"
             >
               <Link to="/admin/traces">
                 <ArrowLeft className="mr-1.5 h-4 w-4" />
@@ -582,8 +582,8 @@ export function RagTraceDetailPage() {
             </Button>
           </div>
           <div className="min-h-[300px] flex items-center justify-center">
-            <div className="text-center text-slate-500">
-              <AlertTriangle className="h-12 w-12 mx-auto mb-4 text-slate-300" />
+            <div className="text-center text-zinc-400">
+              <AlertTriangle className="h-12 w-12 mx-auto mb-4 text-zinc-500" />
               <p>{!traceId ? "缺少 Trace Id" : "暂无数据"}</p>
             </div>
           </div>
@@ -599,14 +599,14 @@ export function RagTraceDetailPage() {
             <div className="flex items-center gap-1.5 text-sm">
               <Link
                   to="/admin/traces"
-                  className="text-slate-500 hover:text-slate-700 transition-colors"
+                  className="text-zinc-400 hover:text-zinc-200 transition-colors"
               >
                 RAG 链路列表
               </Link>
-              <span className="text-slate-300">/</span>
+              <span className="text-zinc-500">/</span>
             </div>
             <div className="flex items-center gap-2">
-              <h1 className="text-lg font-semibold text-slate-900">
+              <h1 className="text-lg font-semibold text-zinc-100">
                 {selectedRun.traceName || "未命名链路"}
               </h1>
               <Badge variant={statusBadgeVariant(selectedRun.status)} className="text-xs">
@@ -621,7 +621,7 @@ export function RagTraceDetailPage() {
                 asChild
                 variant="outline"
                 size="sm"
-                className="text-slate-600 hover:text-slate-800"
+                className="text-zinc-300 hover:text-zinc-100"
             >
               <Link to="/admin/traces">
                 <ArrowLeft className="mr-1.5 h-4 w-4" />
@@ -631,7 +631,7 @@ export function RagTraceDetailPage() {
             <Button
                 variant="outline"
                 size="sm"
-                className="text-slate-600 hover:text-slate-800"
+                className="text-zinc-300 hover:text-zinc-100"
                 onClick={() => loadDetail(traceId)}
                 disabled={detailLoading}
             >
@@ -642,9 +642,9 @@ export function RagTraceDetailPage() {
         </div>
 
         {/* 元信息 */}
-        <div className="flex items-center gap-4 text-xs text-slate-500">
+        <div className="flex items-center gap-4 text-xs text-zinc-400">
         <span
-            className="font-mono cursor-pointer hover:text-slate-700 flex items-center gap-1 transition-colors"
+            className="font-mono cursor-pointer hover:text-zinc-200 flex items-center gap-1 transition-colors"
             onClick={() => copyToClipboard(traceId, "Trace Id")}
             title="点击复制 Trace Id"
         >
@@ -665,17 +665,17 @@ export function RagTraceDetailPage() {
 
         {/* 错误提示 */}
         {selectedRun.errorMessage && (
-            <div className="flex items-start gap-3 p-3 bg-red-50 border border-red-200 rounded-lg">
+            <div className="flex items-start gap-3 p-3 bg-red-500/15 border border-red-400/40 rounded-lg">
               <AlertTriangle className="h-4 w-4 text-red-500 shrink-0 mt-0.5" />
               <div className="text-sm">
-                <span className="font-medium text-red-800">执行出错：</span>
-                <span className="text-red-600 ml-1">{selectedRun.errorMessage}</span>
+                <span className="font-medium text-red-300">执行出错：</span>
+                <span className="text-red-300 ml-1">{selectedRun.errorMessage}</span>
               </div>
             </div>
         )}
 
         {/* 指标条 */}
-        <div className="flex items-center bg-slate-50 rounded-lg border border-slate-200 divide-x divide-slate-200">
+        <div className="flex items-center bg-white/[0.04] rounded-lg border border-white/10 divide-x divide-white/10">
           <MetricItem
               icon={Clock}
               label="总耗时"
@@ -726,37 +726,37 @@ export function RagTraceDetailPage() {
         <Card>
           <CardHeader className="py-3 px-4">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-sm font-medium text-slate-700">
+              <CardTitle className="text-sm font-medium text-zinc-300">
                 执行时序
               </CardTitle>
-              <span className="text-xs text-slate-500">
+              <span className="text-xs text-zinc-400">
               窗口 {formatDuration(timeline.totalWindowMs)}
             </span>
             </div>
           </CardHeader>
           <CardContent className="p-0">
             {timeline.nodes.length === 0 ? (
-                <div className="py-16 text-center text-slate-400">
+                <div className="py-16 text-center text-zinc-500">
                   <Activity className="h-10 w-10 mx-auto mb-3 opacity-50" />
                   <p>暂无节点记录</p>
                 </div>
             ) : (
                 <div>
-                  <div className="grid grid-cols-[minmax(180px,1fr)_120px_2fr_100px] gap-4 px-4 py-2 text-xs font-medium text-slate-500 bg-slate-50 border-y border-slate-100">
+                  <div className="grid grid-cols-[minmax(180px,1fr)_120px_2fr_100px] gap-4 px-4 py-2 text-xs font-medium text-zinc-400 bg-white/[0.04] border-y border-white/10">
                     <span>节点</span>
                     <span>类型</span>
                     <span>时间线</span>
                     <span className="text-right">耗时</span>
                   </div>
 
-                  <div className="grid grid-cols-[minmax(180px,1fr)_120px_2fr_100px] gap-4 px-4 bg-white">
+                  <div className="grid grid-cols-[minmax(180px,1fr)_120px_2fr_100px] gap-4 px-4 bg-[#101a2e]">
                     <div />
                     <div />
                     <TimeScale totalMs={timeline.totalWindowMs} />
                     <div />
                   </div>
 
-                  <div className="divide-y divide-slate-50">
+                  <div className="divide-y divide-white/10">
                     {timeline.nodes.map((node) => {
                       const nodeDisplayName = prettifyNodeName(node.nodeName || node.methodName || node.nodeId);
                       const nodeStatus = normalizeStatus(node.status);

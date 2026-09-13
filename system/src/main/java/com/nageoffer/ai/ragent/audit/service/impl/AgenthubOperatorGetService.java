@@ -15,25 +15,26 @@
  * limitations under the License.
  */
 
-package com.nageoffer.ai.ragent;
+package com.nageoffer.ai.ragent.audit.service.impl;
 
-import com.mzt.logapi.starter.annotation.EnableLogRecord;
-import org.mybatis.spring.annotation.MapperScan;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.scheduling.annotation.EnableScheduling;
+import com.mzt.logapi.beans.Operator;
+import com.mzt.logapi.service.IOperatorGetService;
+import com.nageoffer.ai.ragent.framework.context.UserContext;
+import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
-/**
- * rag 模块测试启动配置，注解镜像 bootstrap 的 RagentApplication
- */
-@SpringBootApplication
-@EnableScheduling
-@EnableLogRecord(tenant = "ragent", proxyTargetClass = true)
-@MapperScan(basePackages = {
-        "com.nageoffer.ai.ragent.rag.dao.mapper",
-        "com.nageoffer.ai.ragent.ingestion.dao.mapper",
-        "com.nageoffer.ai.ragent.knowledge.dao.mapper",
-        "com.nageoffer.ai.ragent.user.dao.mapper",
-        "com.nageoffer.ai.ragent.audit.dao.mapper"
-})
-public class TestRagentApplication {
+@Component
+public class AgenthubOperatorGetService implements IOperatorGetService {
+
+    private static final String SYSTEM_OPERATOR = "SYSTEM";
+
+    @Override
+    public Operator getUser() {
+        String userId = UserContext.getUserId();
+        if (StringUtils.hasText(userId)) {
+            return new Operator(userId);
+        }
+        String username = UserContext.getUsername();
+        return new Operator(StringUtils.hasText(username) ? username : SYSTEM_OPERATOR);
+    }
 }

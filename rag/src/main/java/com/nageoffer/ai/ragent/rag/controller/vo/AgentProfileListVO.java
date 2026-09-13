@@ -34,7 +34,7 @@ import java.util.List;
 public class AgentProfileListVO {
 
     /**
-     * 取自 ragent.engine.type，部署级配置，页面只读展示
+     * 取自 agenthub.engine.type，部署级配置，页面只读展示
      */
     private String mode;
 

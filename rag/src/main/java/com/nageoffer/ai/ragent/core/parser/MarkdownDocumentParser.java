@@ -128,7 +128,7 @@ public class MarkdownDocumentParser implements DocumentParser {
     // ===================== AST Visitor =====================
 
     /**
-     * AST 访问器：commonmark 节点 → ragent Block，只处理顶层 block，不递归进嵌套
+     * AST 访问器：commonmark 节点 → agenthub Block，只处理顶层 block，不递归进嵌套
      * （列表项内的代码块仍归 ListBlock）
      */
     private static final class BlockExtractingVisitor extends AbstractVisitor {

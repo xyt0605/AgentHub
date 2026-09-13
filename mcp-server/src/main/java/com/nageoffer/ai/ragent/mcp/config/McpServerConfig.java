@@ -49,7 +49,7 @@ public class McpServerConfig {
     public McpSyncServer mcpServer(HttpServletStreamableServerTransportProvider transportProvider,
                                    List<McpServerFeatures.SyncToolSpecification> toolSpecs) {
         return McpServer.sync(transportProvider)
-                .serverInfo("ragent-mcp-server", "0.0.1")
+                .serverInfo("agenthub-mcp-server", "0.0.1")
                 .tools(toolSpecs)
                 .build();
     }

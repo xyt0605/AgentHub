@@ -46,7 +46,7 @@ public class AgentPromptConfigVO {
     private String defaultAgentName;
 
     /**
-     * 当前执行架构，取自 ragent.engine.type，仅供展示
+     * 当前执行架构，取自 agenthub.engine.type，仅供展示
      */
     private String mode;
 

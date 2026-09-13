@@ -43,7 +43,7 @@ export function SourceCitation({ index, messageId, source }: SourceCitationProps
         // align-middle 让胶囊中线咬住正文（flex 容器默认拿盒子底边当基线 会整体悬高）
         // 再抬 2px 补上西文 x-height 中线与汉字中线的差
         "relative -top-[2px] ml-[1px] mr-[1px] inline-flex h-[17px] min-w-[17px] items-center justify-center align-middle",
-        "rounded-full bg-[#F0F0F1] px-[5px] font-sans text-[10px] font-medium leading-none text-[#8A8F94]",
+        "rounded-full bg-white/10 px-[5px] font-sans text-[10px] font-medium leading-none text-[#8A8F94]",
         "outline-none transition-colors duration-150 dark:bg-[#2A2A2C] dark:text-[#A1A1AA]",
         interactive &&
           "cursor-pointer hover:bg-[#E4E4E6] hover:text-[#52525B] focus-visible:ring-2 focus-visible:ring-[#D4D4D8] focus-visible:ring-offset-1 dark:hover:bg-[#3F3F46] dark:hover:text-[#E4E4E7]",
@@ -70,8 +70,8 @@ export function SourceCitation({ index, messageId, source }: SourceCitationProps
           align="start"
           sideOffset={8}
           className={cn(
-            "w-[360px] max-w-[calc(100vw-32px)] rounded-2xl border border-[#EDEDEE] bg-white p-0",
-            "text-[#1A1A1A] shadow-[0_16px_48px_-12px_rgba(0,0,0,0.18)]",
+            "w-[360px] max-w-[calc(100vw-32px)] rounded-2xl border border-[#EDEDEE] bg-[#101a2e] p-0",
+            "text-zinc-100 shadow-[0_16px_48px_-12px_rgba(0,0,0,0.18)]",
             "dark:border-[#3A3A3E] dark:bg-[#1F1F21] dark:text-[#F4F4F5]"
           )}
         >
@@ -81,7 +81,7 @@ export function SourceCitation({ index, messageId, source }: SourceCitationProps
             onClick={() => openSource(source)}
             className={cn(
               "group cursor-pointer rounded-2xl p-4 transition-colors",
-              "hover:bg-[#FAFAFA] dark:hover:bg-[#26262A]"
+              "hover:bg-white/[0.04] dark:hover:bg-[#26262A]"
             )}
           >
             <div className="flex items-center gap-2">

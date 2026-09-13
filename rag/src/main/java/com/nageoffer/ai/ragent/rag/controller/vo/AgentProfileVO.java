@@ -55,7 +55,7 @@ public class AgentProfileVO {
     private Integer effectiveSlots;
 
     /**
-     * 已填写但当前架构读不到的槽位数，切换 ragent.engine.type 后才会生效
+     * 已填写但当前架构读不到的槽位数，切换 agenthub.engine.type 后才会生效
      */
     private Integer inactiveSlots;
 

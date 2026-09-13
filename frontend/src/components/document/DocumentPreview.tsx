@@ -84,7 +84,7 @@ function DownloadFallback({ docId, docName, fileType }: DocumentPreviewProps) {
       <button
         type="button"
         onClick={handleDownload}
-        className="inline-flex items-center gap-1.5 rounded-full border border-[#EAEAEA] bg-[#F7F7F8] px-3 py-1.5 text-[#666666] transition-colors hover:border-[#DCDCDC] hover:bg-[#F0F0F1] hover:text-[#1A1A1A]"
+        className="inline-flex items-center gap-1.5 rounded-full border border-[#EAEAEA] bg-[#F7F7F8] px-3 py-1.5 text-zinc-400 transition-colors hover:border-[#DCDCDC] hover:bg-white/10 hover:text-zinc-100"
       >
         <Download className="h-3.5 w-3.5" />
         下载原文件
@@ -189,7 +189,7 @@ export function DocumentPreview({ docId, fileType, docName }: DocumentPreviewPro
   return (
     <div className="flex-1 overflow-y-auto">
       {head ? (
-        <pre className="mx-6 mt-4 overflow-auto rounded-lg border bg-slate-50 px-4 py-3 font-mono text-xs leading-relaxed text-slate-600">
+        <pre className="mx-6 mt-4 overflow-auto rounded-lg border bg-white/[0.04] px-4 py-3 font-mono text-xs leading-relaxed text-zinc-300">
           {head}
         </pre>
       ) : null}

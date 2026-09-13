@@ -40,13 +40,13 @@ class CitationContextEnricherTest {
     @Test
     void injectsSharedSourceIndexesAndRemovesInternalDocumentIds() {
         String context = """
-                <content data-ragent-doc-id="doc-a">
+                <content data-agenthub-doc-id="doc-a">
                 A
                 </content>
-                <content data-ragent-doc-id="doc-b">
+                <content data-agenthub-doc-id="doc-b">
                 B
                 </content>
-                <content data-ragent-doc-id="doc-a">
+                <content data-agenthub-doc-id="doc-a">
                 A2
                 </content>
                 """;
@@ -60,13 +60,13 @@ class CitationContextEnricherTest {
         // 同一文档的多个块复用同一编号
         assertEquals(2, result.split("<content ref=\"2\">", -1).length - 1);
         assertTrue(result.contains("<content ref=\"1\">"));
-        assertFalse(result.contains("data-ragent-doc-id"));
+        assertFalse(result.contains("data-agenthub-doc-id"));
     }
 
     @Test
     void removesInternalIdWhenSourceWasNotRegistered() {
         String context = """
-                <content data-ragent-doc-id="doc-x">
+                <content data-agenthub-doc-id="doc-x">
                 X
                 </content>
                 """;
@@ -74,14 +74,14 @@ class CitationContextEnricherTest {
         String result = enricher.enrich(context, List.of());
 
         assertTrue(result.contains("<content>"));
-        assertFalse(result.contains("data-ragent-doc-id"));
+        assertFalse(result.contains("data-agenthub-doc-id"));
         assertFalse(result.contains(" ref="));
     }
 
     @Test
     void stripsInternalIdWithoutNumberingWhenCitationDisabled() {
         String context = """
-                <content data-ragent-doc-id="doc-a">
+                <content data-agenthub-doc-id="doc-a">
                 A
                 </content>
                 """;
@@ -91,7 +91,7 @@ class CitationContextEnricherTest {
 
         // 关闭引用：有来源也不注入编号，但内部 docId 仍必须抹掉
         assertTrue(result.contains("<content>"));
-        assertFalse(result.contains("data-ragent-doc-id"));
+        assertFalse(result.contains("data-agenthub-doc-id"));
         assertFalse(result.contains(" ref="));
     }
 }

@@ -2,7 +2,7 @@
   <a href="https://github.com/xyt0605/AgentHub">
     <picture>
       <source srcset="assets/ragent-ai-banner.png">
-      <img src="assets/ragent-ai-banner.png" alt="Ragent AI">
+      <img src="assets/ragent-ai-banner.png" alt="Agenthub">
     </picture>
   </a>
 </p>
@@ -18,9 +18,9 @@
   <img src="https://img.shields.io/badge/Spring%20AI-2.0-6DB33F?style=flat-square&logo=springboot&logoColor=white" />
 </p>
 
-## 🚀 什么是 Ragent AI？
+## 🚀 什么是 Agenthub？
 
-Ragent 是一个面向 Agentic RAG 演进的生产级 Java AI 应用平台，覆盖从文档入库到智能问答的完整链路。
+Agenthub 是一个面向 Agentic RAG 演进的生产级 Java AI 应用平台，覆盖从文档入库到智能问答的完整链路。
 
 - **混合检索**：向量、关键词、知识图谱、联网搜索并行召回，支持去重、RRF 融合与 Rerank。
 - **问题理解**：支持查询词映射、问题重写与拆分、树形意图识别和多知识库路由。
@@ -45,15 +45,15 @@ Ragent 是一个面向 Agentic RAG 演进的生产级 Java AI 应用平台，覆
 
 | &nbsp; | 链接 | 说明 |
 |:---:|:---|:---|
-| 📖 | <a href="https://nageoffer.com/ragent" target="_blank">官网文档</a> | Ragent AI 完整文档 |
-| 🚀 | <a href="https://nageoffer.com/ragent/demo/" target="_blank">在线体验</a> | 无需部署，直接体验 Ragent AI |
-| ⚡ | <a href="https://nageoffer.com/ragent/local-dev/" target="_blank">快速启动</a> | 本地搭建 Ragent AI 前后端项目 |
+| 📖 | <a href="https://nageoffer.com/ragent" target="_blank">官网文档</a> | Agenthub 完整文档 |
+| 🚀 | <a href="https://nageoffer.com/ragent/demo/" target="_blank">在线体验</a> | 无需部署，直接体验 Agenthub |
+| ⚡ | <a href="https://nageoffer.com/ragent/local-dev/" target="_blank">快速启动</a> | 本地搭建 Agenthub 前后端项目 |
 | 📝 | <a href="https://nageoffer.com/ragent/interview/" target="_blank">简历怎么写</a> | 项目如何写到简历上 |
 | 💡 | <a href="https://nageoffer.com/ragent/why-springai-langchain4j/" target="_blank">为什么不用 Spring AI / LangChain4j</a> | 技术选型的思考 |
 
 ## ❤️ 赞助与支持
 
-感谢以下伙伴对 Ragent AI 的支持！
+感谢以下伙伴对 Agenthub 的支持！
 
 <table>
   <tr>
@@ -61,7 +61,7 @@ Ragent 是一个面向 Agentic RAG 演进的生产级 Java AI 应用平台，覆
       <a href="https://moacode.org/register?ref=doorbyte"><img src="assets/moacode.svg" alt="moacode" width="200" /></a>
     </td>
     <td>
-      moacode 是一家稳定、高效的 API 中转服务商，提供 Claude、GPT、Codex、Claude Code 等多种模型调用服务。Ragent AI 用户可<a href="https://moacode.org/register?ref=doorbyte">通过此链接</a>注册，并在充值时填写 <code>MAGE</code> 优惠码，享受 9 折优惠。
+      moacode 是一家稳定、高效的 API 中转服务商，提供 Claude、GPT、Codex、Claude Code 等多种模型调用服务。Agenthub 用户可<a href="https://moacode.org/register?ref=doorbyte">通过此链接</a>注册，并在充值时填写 <code>MAGE</code> 优惠码，享受 9 折优惠。
     </td>
   </tr>
 </table>
@@ -99,9 +99,9 @@ AI 这波浪潮，Java 程序员已经躲不过去了。
 
 还有些同学报了训练营，发现清一色是 Python。语言不熟、生态不通，学完感觉收获有限，回到 Java 这边还是不知道怎么下手。就算用 Spring AI 或者 LangChain4j，版本迭代太快，低版本功能缺，高版本升级约等于重写，也是一肚子苦水。
 
-基于这些问题，我决定做一个 RAG 实战项目，名字叫 **Ragent**。
+基于这些问题，我决定做一个 RAG 实战项目，名字叫 **Agenthub**。
 
-这个项目会覆盖市面上主流的 RAG 技术点，也会涉及 MCP、Agent 等场景。更重要的是，它不是我看了几篇文章拼凑出来的玩具——我在公司**实际落地过 RAG 系统**，解决过信息孤岛、知识检索、效率提升这些真实的业务问题。所以 Ragent 的复杂度，就是企业级项目该有的复杂度。
+这个项目会覆盖市面上主流的 RAG 技术点，也会涉及 MCP、Agent 等场景。更重要的是，它不是我看了几篇文章拼凑出来的玩具——我在公司**实际落地过 RAG 系统**，解决过信息孤岛、知识检索、效率提升这些真实的业务问题。所以 Agenthub 的复杂度，就是企业级项目该有的复杂度。
 
 学完之后，你可以放心大胆地跟面试官讲：**企业里就是这么做的**。
 
@@ -162,7 +162,7 @@ RAG 项目的核心竞争力不在于你用了多强的模型，而在于工程�
 
 </details>
 
-## 🏗️ Ragent 核心设计
+## 🏗️ Agenthub 核心设计
 
 采用前后端分离的模块化单体架构，后端按职责分为七个 Maven 模块：
 
@@ -180,7 +180,7 @@ RAG 项目的核心竞争力不在于你用了多强的模型，而在于工程�
 
 ![](assets/ragent-module-layering-v2.png)
 
-一次用户提问，在 Ragent AI 服务里经过的核心链路如下所示：
+一次用户提问，在 Agenthub 服务里经过的核心链路如下所示：
 
 > 实际项目代码中，逻辑比图表上更加复杂。下图仅展示核心流程，落地过程中还涉及很多细节和优化。
 
@@ -189,13 +189,13 @@ RAG 项目的核心竞争力不在于你用了多强的模型，而在于工程�
 <details>
 <summary><b>多路检索架构、模型路由与容错等</b>（点击展开）</summary>
 
-检索是 RAG 系统的核心。Ragent 当前提供向量、Elasticsearch 关键词、LightRAG 知识图谱和 You.com 联网搜索四类通道，按配置启用后并行执行：
+检索是 RAG 系统的核心。Agenthub 当前提供向量、Elasticsearch 关键词、LightRAG 知识图谱和 You.com 联网搜索四类通道，按配置启用后并行执行：
 
 ![](assets/multi-channel-retrieval.png)
 
 每个通道独立执行、互不影响，通过专用线程池并行调度。后处理链依次完成去重、加权 RRF 融合、Rerank 和元数据富化；召回预算、Rerank 候选池与最终上下文条数分段配置，并在启动时校验漏斗不变式。
 
-生产环境不可能只依赖一个模型供应商，Ragent 的模型路由机制解决的就是这个问题：
+生产环境不可能只依赖一个模型供应商，Agenthub 的模型路由机制解决的就是这个问题：
 
 ![](assets/model-routing-failover.svg)
 
@@ -209,7 +209,7 @@ RAG 项目的核心竞争力不在于你用了多强的模型，而在于工程�
 
 每个节点的配置存储在数据库中，支持条件执行和输出链式传递。每个任务和节点都有独立的执行日志，出了问题能精确定位到哪一步。
 
-Ragent 不是为了用设计模式而用，每个模式都对应一个具体的工程问题：
+Agenthub 不是为了用设计模式而用，每个模式都对应一个具体的工程问题：
 
 | 设计方式 | 业务场景 | 解决的问题 |
 |:---|:---|:---|
@@ -277,13 +277,13 @@ Ragent 不是为了用设计模式而用，每个模式都对应一个具体的�
 
 ### 5. 完整控制台
 
-Ragent 提供覆盖**普通用户与管理员用户**的 React 控制台，不只是聊天页面，也把检索证据和运维入口暴露出来。
+Agenthub 提供覆盖**普通用户与管理员用户**的 React 控制台，不只是聊天页面，也把检索证据和运维入口暴露出来。
 
 系统通过多轮 AI 辅助设计优化，在保证功能完整性的同时，提供更加现代化和友好的交互体验。
 
 #### 5.1 用户问答界面
 
-用户访问 Ragent 首页后，可在输入框中直接输入问题发起问答，同时支持开启**深度思考模式**以获得更高质量的回答。
+用户访问 Agenthub 首页后，可在输入框中直接输入问题发起问答，同时支持开启**深度思考模式**以获得更高质量的回答。
 
 输入框下方提供示例问题标签，用户点击即可自动填充问题，方便快速体验系统能力。
 
@@ -324,15 +324,15 @@ Ragent 提供覆盖**普通用户与管理员用户**的 React 控制台，不�
 
 </details>
 
-为了避免传统系统常见的毛坯界面体验，Ragent 的控制台经过多轮 AI 辅助设计与优化，逐步迭代完善，最终呈现出当前简洁、美观且实用的界面效果。
+为了避免传统系统常见的毛坯界面体验，Agenthub 的控制台经过多轮 AI 辅助设计与优化，逐步迭代完善，最终呈现出当前简洁、美观且实用的界面效果。
 
 ![](assets/admin-theme.png)
 
 ### 6. 和市面上项目的区别
 
-Ragent 定位于 **Java AI 应用的源码级工程参考**，重点是完整链路、生产保障和二次开发能力。
+Agenthub 定位于 **Java AI 应用的源码级工程参考**，重点是完整链路、生产保障和二次开发能力。
 
-| 对比维度 | 常见 RAG 教程 / Demo | Ragent |
+| 对比维度 | 常见 RAG 教程 / Demo | Agenthub |
 |:---|:-----------------|:---|
 | 项目定位 | 跑通检索与生成          | 完整 Java AI 应用 |
 | 检索 | 单路向量 TopK        | 向量 / 关键词 / 图谱 / 联网召回，RRF 融合与 Rerank |
@@ -348,14 +348,14 @@ Ragent 定位于 **Java AI 应用的源码级工程参考**，重点是完整链
 
 ## ❓ 常见问题答疑
 
-一句话：学完 Ragent，你既能跟面试官聊 RAG/Agent 的技术深度，也能证明自己的 Java 工程化水平。
+一句话：学完 Agenthub，你既能跟面试官聊 RAG/Agent 的技术深度，也能证明自己的 Java 工程化水平。
 
 <details>
 <summary><b>能学到什么 / 适合谁？</b>（点击展开）</summary>
 
 ### 1. 能够学到什么？
 
-Ragent 不只是教你调 API，而是让你理解一个 RAG 系统从 0 到 1 落地的全过程。粗略来说，你能收获这些：
+Agenthub 不只是教你调 API，而是让你理解一个 RAG 系统从 0 到 1 落地的全过程。粗略来说，你能收获这些：
 
 - **RAG 全链路工程能力**：文档解析、分块策略、Embedding 向量化、多路检索、重排序、Prompt 组装、流式生成，每个环节怎么做、为什么这么做。
 - **AI 应用架构设计**：意图识别体系、问题重写与拆分、会话记忆管理、MCP 工具调用，这些是 AI 应用区别于传统 CRUD 系统的核心能力。
@@ -367,15 +367,15 @@ Ragent 不只是教你调 API，而是让你理解一个 RAG 系统从 0 到 1 �
 
 **校招同学：**
 
-- **Java 后端方向的在校生**：简历上已经有了商城、外卖等常规项目，需要一个有区分度的项目来拉开差距。Ragent 能让你在面试中聊 AI + 工程化，而不是千篇一律的 CRUD。
-- **想转 AI 应用方向的同学**：对大模型感兴趣，但不想从 Python 和算法入手。Ragent 基于 Java 技术栈，学习曲线平滑，不需要额外切换语言生态。
+- **Java 后端方向的在校生**：简历上已经有了商城、外卖等常规项目，需要一个有区分度的项目来拉开差距。Agenthub 能让你在面试中聊 AI + 工程化，而不是千篇一律的 CRUD。
+- **想转 AI 应用方向的同学**：对大模型感兴趣，但不想从 Python 和算法入手。Agenthub 基于 Java 技术栈，学习曲线平滑，不需要额外切换语言生态。
 - **准备实习/秋招/春招的同学**：大厂校招越来越看重候选人对新技术的敏感度，简历上有 AI 项目经验，能直接证明你的学习能力和技术视野。
 
 **社招同学：**
 
-- **1-3 年经验的 Java 开发**：日常写业务代码，想往 AI 方向转型但不知道从哪下手。Ragent 的技术栈你都熟悉，学的是 AI 应用层的东西，上手快、能落地。
-- **3-5 年经验的后端开发**：技术能力不差，但面试被问到 AI 相关问题答不上来，少了一个谈薪筹码。通过 Ragent 补上 RAG、Agent、MCP 这些知识点，面试时能聊得有深度。
-- **想跳槽到 AI 团队的开发者**：越来越多的 JD 要求有 AI 相关经验，Ragent 能帮你快速建立 RAG 系统的全局认知，面试时不再只是纸上谈兵。
+- **1-3 年经验的 Java 开发**：日常写业务代码，想往 AI 方向转型但不知道从哪下手。Agenthub 的技术栈你都熟悉，学的是 AI 应用层的东西，上手快、能落地。
+- **3-5 年经验的后端开发**：技术能力不差，但面试被问到 AI 相关问题答不上来，少了一个谈薪筹码。通过 Agenthub 补上 RAG、Agent、MCP 这些知识点，面试时能聊得有深度。
+- **想跳槽到 AI 团队的开发者**：越来越多的 JD 要求有 AI 相关经验，Agenthub 能帮你快速建立 RAG 系统的全局认知，面试时不再只是纸上谈兵。
 
 </details>
 
@@ -389,9 +389,9 @@ Ragent 不只是教你调 API，而是让你理解一个 RAG 系统从 0 到 1 �
 
 之前做拿个 offer 社群时，第一个业务系统 12306 选择了开源，收获了
 <a href="https://github.com/nageoffer/12306"><img src="https://img.shields.io/github/stars/nageoffer/12306?style=flat-square&logo=github&label=GitHub" style="vertical-align: middle;" /></a>
-<a href="https://gitee.com/nageoffer/12306/stargazers"><img src="https://gitee.com/nageoffer/12306/badge/star.svg?theme=dark" style="vertical-align: middle;" /></a>，也得到了很多同学的认可和信任。这次 Ragent 作为社群在 AI 领域的第一个项目，同样选择开源——既然代码质量经得起检验，就没必要藏着掖着。
+<a href="https://gitee.com/nageoffer/12306/stargazers"><img src="https://gitee.com/nageoffer/12306/badge/star.svg?theme=dark" style="vertical-align: middle;" /></a>，也得到了很多同学的认可和信任。这次 Agenthub 作为社群在 AI 领域的第一个项目，同样选择开源——既然代码质量经得起检验，就没必要藏着掖着。
 
-市面上不少项目只敢放几张截图、讲几个概念，真正敢把代码全部摊开的并不多。Ragent 敢这么做，是因为前面讲的那些能力——多路检索、意图识别、模型容错、全链路追踪——不是 PPT 里的架构图，是你能跑起来、能断点调试、能逐行阅读的真实代码。
+市面上不少项目只敢放几张截图、讲几个概念，真正敢把代码全部摊开的并不多。Agenthub 敢这么做，是因为前面讲的那些能力——多路检索、意图识别、模型容错、全链路追踪——不是 PPT 里的架构图，是你能跑起来、能断点调试、能逐行阅读的真实代码。
 
 开源对你来说意味着什么：
 

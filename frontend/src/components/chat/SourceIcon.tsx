@@ -21,10 +21,10 @@ function faviconUrl(url?: string | null): string | null {
 function fileGlyph(ext: string): { Icon: typeof File; color: string } {
   if (ext === "pdf") return { Icon: FileText, color: "text-[#E5484D]" };
   if (ext === "xlsx" || ext === "xls" || ext === "csv") return { Icon: Sheet, color: "text-[#12A150]" };
-  if (ext === "doc" || ext === "docx") return { Icon: FileText, color: "text-[#2563EB]" };
+  if (ext === "doc" || ext === "docx") return { Icon: FileText, color: "text-violet-300" };
   if (ext === "ppt" || ext === "pptx") return { Icon: Presentation, color: "text-[#EA7B2C]" };
-  if (ext === "md" || ext === "markdown") return { Icon: FileText, color: "text-[#2563EB]" };
-  if (ext === "txt") return { Icon: FileText, color: "text-[#666666]" };
+  if (ext === "md" || ext === "markdown") return { Icon: FileText, color: "text-violet-300" };
+  if (ext === "txt") return { Icon: FileText, color: "text-zinc-400" };
   if (IMAGE_EXTS.includes(ext)) return { Icon: ImageIcon, color: "text-[#8B5CF6]" };
   return { Icon: File, color: "text-[#9AA0A6]" };
 }

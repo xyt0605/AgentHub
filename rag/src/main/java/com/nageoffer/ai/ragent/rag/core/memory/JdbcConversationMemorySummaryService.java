@@ -55,7 +55,7 @@ import static com.nageoffer.ai.ragent.rag.constant.RAGConstant.CONTEXT_FORMAT_PA
 @RequiredArgsConstructor
 public class JdbcConversationMemorySummaryService implements ConversationMemorySummaryService {
 
-    private static final String SUMMARY_LOCK_PREFIX = "ragent:memory:summary:lock:";
+    private static final String SUMMARY_LOCK_PREFIX = "agenthub:memory:summary:lock:";
 
     private final ConversationGroupService conversationGroupService;
     private final ConversationMessageService conversationMessageService;

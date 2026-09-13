@@ -114,7 +114,7 @@ final class JdbcClient implements AutoCloseable {
         }
         Path driverJar = locateDriverJar();
         if (driverJar == null) {
-            throw new SQLException("未找到 PostgreSQL JDBC 驱动。请先构建 RagentAI，"
+            throw new SQLException("未找到 PostgreSQL JDBC 驱动。请先构建 AgenthubAI，"
                     + "或通过 database.jdbc-driver-path 指定 postgresql-*.jar");
         }
         driverClassLoader = new URLClassLoader(new URL[]{driverJar.toUri().toURL()},

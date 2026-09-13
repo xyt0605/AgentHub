@@ -322,17 +322,17 @@ const useHealthStatus = (performance: DashboardPerformance | null, overview: Das
 // ============================================================================
 
 const DashCard = ({ children, className }: { children: ReactNode; className?: string }) => (
-    <div className={cn("rounded-2xl bg-white p-5 shadow-[0_1px_3px_rgba(0,0,0,0.08)]", className)}>
+    <div className={cn("rounded-2xl bg-[#101a2e] p-5 shadow-[0_1px_3px_rgba(0,0,0,0.08)]", className)}>
       {children}
     </div>
 );
 
 const CardTitle = ({ children }: { children: ReactNode }) => (
-    <h3 className="mb-4 text-sm font-semibold text-slate-700">{children}</h3>
+    <h3 className="mb-4 text-sm font-semibold text-zinc-300">{children}</h3>
 );
 
 const LoadingBlock = ({ className }: { className?: string }) => (
-    <div className={cn("animate-pulse rounded-lg bg-slate-100", className)} />
+    <div className={cn("animate-pulse rounded-lg bg-white/10", className)} />
 );
 
 // ============================================================================
@@ -340,10 +340,10 @@ const LoadingBlock = ({ className }: { className?: string }) => (
 // ============================================================================
 
 const HEALTH_CONFIG: Record<HealthStatus, { bg: string; text: string; label: string }> = {
-  healthy: { bg: "bg-emerald-100", text: "text-emerald-700", label: "运行正常" },
-  attention: { bg: "bg-amber-100", text: "text-amber-700", label: "需要关注" },
-  critical: { bg: "bg-red-100", text: "text-red-700", label: "风险偏高" },
-  unknown: { bg: "bg-slate-100", text: "text-slate-500", label: "暂无数据" }
+  healthy: { bg: "bg-emerald-500/20", text: "text-emerald-300", label: "运行正常" },
+  attention: { bg: "bg-amber-500/20", text: "text-amber-300", label: "需要关注" },
+  critical: { bg: "bg-red-500/20", text: "text-red-300", label: "风险偏高" },
+  unknown: { bg: "bg-white/[0.04]", text: "text-zinc-400", label: "暂无数据" }
 };
 
 const DashboardHeader = ({
@@ -360,10 +360,10 @@ const DashboardHeader = ({
   onTimeWindowChange: (window: DashboardTimeWindow) => void;
 }) => (
     <header className="mb-3 flex items-center justify-between">
-      <h1 className="text-4xl font-bold tracking-tight text-slate-900">Dashboard</h1>
+      <h1 className="text-4xl font-bold tracking-tight text-zinc-100">Dashboard</h1>
 
       <div className="flex items-center gap-3">
-        <div className="inline-flex rounded-lg bg-white p-1 shadow-sm">
+        <div className="inline-flex rounded-lg bg-[#101a2e] p-1 shadow-sm">
           {WINDOW_OPTIONS.map((opt) => (
               <button
                   key={opt.value}
@@ -372,8 +372,8 @@ const DashboardHeader = ({
                   className={cn(
                       "rounded-md px-3 py-1.5 text-sm font-medium transition-all",
                       timeWindow === opt.value
-                          ? "bg-slate-900 text-white"
-                          : "text-slate-500 hover:text-slate-700"
+                          ? "bg-white/10 text-zinc-100"
+                          : "text-zinc-400 hover:text-zinc-200"
                   )}
               >
                 {opt.label}
@@ -381,8 +381,8 @@ const DashboardHeader = ({
           ))}
         </div>
 
-        <div className="flex items-center gap-2 text-sm text-slate-400">
-          <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+        <div className="flex items-center gap-2 text-sm text-zinc-500">
+          <span className="h-1.5 w-1.5 rounded-full bg-emerald-500/150" />
           <span>{formatLastUpdated(lastUpdated)}</span>
         </div>
 
@@ -391,7 +391,7 @@ const DashboardHeader = ({
             size="icon"
             onClick={onRefresh}
             disabled={loading}
-            className="h-9 w-9 rounded-lg border-slate-200 bg-white text-slate-500 hover:text-slate-700"
+            className="h-9 w-9 rounded-lg border-white/10 bg-[#101a2e] text-zinc-400 hover:text-zinc-200"
         >
           <RefreshCw className={cn("h-4 w-4", loading && "animate-spin")} />
         </Button>
@@ -419,15 +419,15 @@ const KPICardItem = ({ value, label, change, icon, iconBg, iconColor }: KPICardP
 
   const changeColor =
       showChange && ((isUp && changePositive) || (!isUp && !changePositive))
-          ? "text-emerald-600"
+          ? "text-emerald-300"
           : "text-red-500";
 
   return (
-      <div className="rounded-xl bg-slate-50 p-4">
+      <div className="rounded-xl bg-white/[0.04] p-4">
         <div className="flex items-start justify-between">
           <div>
-            <p className="text-2xl font-bold tracking-tight text-slate-900">{value}</p>
-            <p className="mt-1 text-sm text-slate-500">{label}</p>
+            <p className="text-2xl font-bold tracking-tight text-zinc-100">{value}</p>
+            <p className="mt-1 text-sm text-zinc-400">{label}</p>
           </div>
           <div
               className="flex h-10 w-10 items-center justify-center rounded-xl"
@@ -449,10 +449,10 @@ const KPICardItem = ({ value, label, change, icon, iconBg, iconColor }: KPICardP
               {change!.value > 0 ? "+" : ""}
                   {change!.value.toFixed(1)}%
             </span>
-                <span className="text-slate-400">较上周期</span>
+                <span className="text-zinc-500">较上周期</span>
               </>
           ) : (
-              <span className="text-slate-400">--</span>
+              <span className="text-zinc-500">--</span>
           )}
         </div>
       </div>
@@ -481,32 +481,32 @@ const KPISection = ({ overview }: { overview: DashboardOverview | null }) => {
       label: "活跃用户",
       change: toChange(kpis?.activeUsers.deltaPct),
       icon: <Activity className="h-5 w-5" />,
-      iconBg: "#DBEAFE",
-      iconColor: "#2563EB"
+      iconBg: "rgba(139, 92, 246, 0.16)",
+      iconColor: "#a78bfa"
     },
     {
       value: formatNumber(kpis?.sessions24h.value),
       label: "会话数",
       change: toChange(kpis?.sessions24h.deltaPct),
       icon: <MessageSquare className="h-5 w-5" />,
-      iconBg: "#E0E7FF",
-      iconColor: "#4F46E5"
+      iconBg: "rgba(34, 211, 238, 0.14)",
+      iconColor: "#67e8f9"
     },
     {
       value: formatNumber(kpis?.messages24h.value),
       label: "消息数",
       change: toChange(kpis?.messages24h.deltaPct),
       icon: <Zap className="h-5 w-5" />,
-      iconBg: "#FEF3C7",
-      iconColor: "#D97706"
+      iconBg: "rgba(245, 158, 11, 0.15)",
+      iconColor: "#fbbf24"
     },
     {
       value: sessionDepth === null ? "-" : formatRatio(sessionDepth),
       label: "会话深度（条/会话）",
       change: undefined,
       icon: <BarChart3 className="h-5 w-5" />,
-      iconBg: "#E0F2FE",
-      iconColor: "#0284C7"
+      iconBg: "rgba(56, 189, 248, 0.15)",
+      iconColor: "#38bdf8"
     }
   ];
 
@@ -687,14 +687,14 @@ const SimpleAreaChart = ({
             }}
         >
           {yTicks.map((tick, i) => (
-              <span key={i} className="pr-1 text-right text-[10px] leading-none text-slate-400">
+              <span key={i} className="pr-1 text-right text-[10px] leading-none text-zinc-500">
             {formatCompactNumber(tick)}
           </span>
           ))}
         </div>
 
         {/* Y轴标题 */}
-        <div className="absolute left-0 top-0 text-[10px] text-slate-400">{valueLabel}</div>
+        <div className="absolute left-0 top-0 text-[10px] text-zinc-500">{valueLabel}</div>
 
         {/* 图表区域 */}
         <div
@@ -713,7 +713,7 @@ const SimpleAreaChart = ({
             {yTicks.map((_, i) => (
                 <div
                     key={i}
-                    className="absolute left-0 right-0 border-t border-dashed border-slate-100"
+                    className="absolute left-0 right-0 border-t border-dashed border-[rgba(148,163,184,0.15)]"
                     style={{ top: `${(i / (yTicks.length - 1)) * 100}%` }}
                 />
             ))}
@@ -727,15 +727,15 @@ const SimpleAreaChart = ({
           >
             <defs>
               <linearGradient id="trafficGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="#3B82F6" stopOpacity="0.25" />
-                <stop offset="100%" stopColor="#3B82F6" stopOpacity="0.02" />
+                <stop offset="0%" stopColor="#8b5cf6" stopOpacity="0.25" />
+                <stop offset="100%" stopColor="#8b5cf6" stopOpacity="0.02" />
               </linearGradient>
             </defs>
             <path d={areaPath} fill="url(#trafficGradient)" />
             <path
                 d={linePath}
                 fill="none"
-                stroke="#3B82F6"
+                stroke="#8b5cf6"
                 strokeWidth="2"
                 vectorEffect="non-scaling-stroke"
             />
@@ -746,12 +746,12 @@ const SimpleAreaChart = ({
               <>
                 {/* 垂直指示线 */}
                 <div
-                    className="pointer-events-none absolute top-0 h-full w-px bg-slate-300"
+                    className="pointer-events-none absolute top-0 h-full w-px bg-white/20"
                     style={{ left: tooltip.x }}
                 />
                 {/* 圆点 */}
                 <div
-                    className="pointer-events-none absolute h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-blue-500 bg-white shadow-sm"
+                    className="pointer-events-none absolute h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-violet-400 bg-[#101a2e] shadow-sm"
                     style={{ left: tooltip.x, top: tooltip.y }}
                 />
                 {/* 标签 */}
@@ -764,7 +764,7 @@ const SimpleAreaChart = ({
                 >
                   <div className="font-medium">{tooltip.label}</div>
                   <div className="flex items-center gap-1">
-                    <span className="h-2 w-2 rounded-sm bg-blue-400" />
+                    <span className="h-2 w-2 rounded-sm bg-violet-400" />
                     <span>
                   {valueLabel}: {tooltip.value}
                 </span>
@@ -787,7 +787,7 @@ const SimpleAreaChart = ({
           {xLabels.map((item, i) => (
               <span
                   key={i}
-                  className="text-[10px] text-slate-400"
+                  className="text-[10px] text-zinc-500"
                   style={{
                     position: "absolute",
                     left: `${item.position * 100}%`,
@@ -831,14 +831,14 @@ const TrafficOverviewSection = ({
   return (
       <DashCard className={cn("flex flex-col", className)}>
         <div className="mb-3">
-          <p className="text-sm font-semibold text-slate-700">流量概览</p>
+          <p className="text-sm font-semibold text-zinc-300">流量概览</p>
           {showChange}
         </div>
 
         {loading ? (
             <LoadingBlock className="h-full flex-1" />
         ) : chartData.length === 0 ? (
-            <div className="flex flex-1 items-center justify-center text-sm text-slate-400">
+            <div className="flex flex-1 items-center justify-center text-sm text-zinc-500">
               暂无流量数据
             </div>
         ) : (
@@ -887,7 +887,7 @@ const TrendChartItem = ({
 }) => {
   if (loading) {
     return (
-        <div className="rounded-xl bg-slate-50 p-4">
+        <div className="rounded-xl bg-white/[0.04] p-4">
           <LoadingBlock className="mb-3 h-4 w-24" />
           <LoadingBlock className="h-48 w-full" />
         </div>
@@ -895,9 +895,9 @@ const TrendChartItem = ({
   }
 
   return (
-      <div className="rounded-xl bg-slate-50 p-4">
-        <div className="mb-1 text-xs font-medium text-slate-500">{title}</div>
-        {yAxisLabel && <p className="mb-2 text-[11px] text-slate-400">{yAxisLabel}</p>}
+      <div className="rounded-xl bg-white/[0.04] p-4">
+        <div className="mb-1 text-xs font-medium text-zinc-400">{title}</div>
+        {yAxisLabel && <p className="mb-2 text-[11px] text-zinc-500">{yAxisLabel}</p>}
         <div className="h-48">
           <SimpleLineChart
               series={series}
@@ -990,12 +990,12 @@ const STATUS_COLOR: Record<MetricTone, string> = {
 };
 
 const QUALITY_SNAPSHOT_META = [
-  { label: "错误率", toneClass: "bg-red-500", valueClass: "text-red-600", target: "阈值 ≤5%" },
-  { label: "无知识率", toneClass: "bg-amber-500", valueClass: "text-amber-600", target: "阈值 ≤20%" },
+  { label: "错误率", toneClass: "bg-red-500/150", valueClass: "text-red-300", target: "阈值 ≤5%" },
+  { label: "无知识率", toneClass: "bg-amber-500/150", valueClass: "text-amber-300", target: "阈值 ≤20%" },
   {
     label: "慢响应率（>20s）",
-    toneClass: "bg-sky-500",
-    valueClass: "text-sky-600",
+    toneClass: "bg-cyan-500",
+    valueClass: "text-cyan-300",
     target: "阈值 ≤20%"
   }
 ] as const;
@@ -1012,8 +1012,8 @@ const MetricRow = ({
   status: MetricTone;
 }) => (
     <div className="flex items-center justify-between py-2.5">
-    <span className="flex items-center gap-2.5 text-sm text-slate-600">
-      <Icon className="h-4 w-4 text-slate-400" />
+    <span className="flex items-center gap-2.5 text-sm text-zinc-300">
+      <Icon className="h-4 w-4 text-zinc-500" />
       {label}
     </span>
       <span className="text-sm font-semibold tabular-nums" style={{ color: STATUS_COLOR[status] }}>
@@ -1036,10 +1036,10 @@ const QualitySnapshot = ({
   ];
 
   return (
-      <div className="mt-4 rounded-xl border border-slate-100 bg-slate-50 p-3.5">
+      <div className="mt-4 rounded-xl border border-white/10 bg-white/[0.04] p-3.5">
         <div className="mb-3 flex items-center justify-between">
-          <p className="text-xs font-medium text-slate-600">质量快照（柱状）</p>
-          <span className="text-[11px] text-slate-400">{windowLabel}</span>
+          <p className="text-xs font-medium text-zinc-300">质量快照（柱状）</p>
+          <span className="text-[11px] text-zinc-500">{windowLabel}</span>
         </div>
         <div className="grid grid-cols-3 gap-2.5">
           {items.map((item) => {
@@ -1048,7 +1048,7 @@ const QualitySnapshot = ({
             const barHeight = `${Math.max(normalized, hasValue ? 4 : 0)}%`;
             return (
                 <div key={item.label} className="space-y-1.5">
-                  <div className="flex h-24 items-end rounded-md border border-slate-200 bg-white p-1.5">
+                  <div className="flex h-24 items-end rounded-md border border-white/10 bg-[#101a2e] p-1.5">
                     <div
                         className={cn(
                             "w-full rounded-sm transition-[height] duration-500",
@@ -1062,8 +1062,8 @@ const QualitySnapshot = ({
                   >
                     {formatPercent(item.value)}
                   </div>
-                  <div className="text-center text-[11px] text-slate-500">{item.label}</div>
-                  <div className="text-center text-[10px] text-slate-400">{item.target}</div>
+                  <div className="text-center text-[11px] text-zinc-400">{item.label}</div>
+                  <div className="text-center text-[10px] text-zinc-500">{item.target}</div>
                 </div>
             );
           })}
@@ -1090,19 +1090,19 @@ const EfficiencySnapshot = ({
   ];
 
   return (
-      <div className="mt-4 rounded-xl border border-slate-100 bg-slate-50 p-3.5">
+      <div className="mt-4 rounded-xl border border-white/10 bg-white/[0.04] p-3.5">
         <div className="mb-1.5 flex items-center justify-between">
-          <p className="text-xs font-medium text-slate-600">运营效率</p>
-          <span className="text-[11px] text-slate-400">{windowLabel}</span>
+          <p className="text-xs font-medium text-zinc-300">运营效率</p>
+          <span className="text-[11px] text-zinc-500">{windowLabel}</span>
         </div>
-        <div className="divide-y divide-slate-100">
+        <div className="divide-y divide-white/10">
           {metrics.map((metric) => {
             const valueText =
                 metric.value === null ? "-" : `${formatRatio(metric.value)} ${metric.unit}`;
             return (
                 <div key={metric.label} className="flex items-center justify-between py-2">
-                  <span className="text-xs text-slate-500">{metric.label}</span>
-                  <span className="text-sm font-semibold tabular-nums text-slate-700">{valueText}</span>
+                  <span className="text-xs text-zinc-400">{metric.label}</span>
+                  <span className="text-sm font-semibold tabular-nums text-zinc-300">{valueText}</span>
                 </div>
             );
           })}
@@ -1137,7 +1137,7 @@ const AIPerformanceCard = ({
   return (
       <DashCard>
         <div className="mb-4 flex items-center justify-between">
-          <h3 className="text-sm font-semibold text-slate-700">AI 性能</h3>
+          <h3 className="text-sm font-semibold text-zinc-300">AI 性能</h3>
           <span
               className={cn("rounded-full px-2.5 py-1 text-xs font-medium", healthCfg.bg, healthCfg.text)}
           >
@@ -1148,7 +1148,7 @@ const AIPerformanceCard = ({
         <div className="flex justify-center py-3">
           <div className="relative">
             <svg className="-rotate-90" viewBox="0 0 120 120" width="120" height="120">
-              <circle cx="60" cy="60" r={radius} fill="none" stroke="#F1F5F9" strokeWidth={8} />
+              <circle cx="60" cy="60" r={radius} fill="none" stroke="rgba(148, 163, 184, 0.15)" strokeWidth={8} />
               <circle
                   cx="60"
                   cy="60"
@@ -1166,12 +1166,12 @@ const AIPerformanceCard = ({
             <span className="text-2xl font-bold" style={{ color: ringColor }}>
               {formatPercent(successRate)}
             </span>
-              <span className="mt-0.5 text-xs text-slate-400">成功率</span>
+              <span className="mt-0.5 text-xs text-zinc-500">成功率</span>
             </div>
           </div>
         </div>
 
-        <div className="divide-y divide-slate-100">
+        <div className="divide-y divide-white/10">
           <MetricRow
               icon={Timer}
               label="平均响应"
@@ -1209,16 +1209,16 @@ const TYPE_ICON: Record<InsightCardData["type"], typeof Info> = {
 };
 
 const TYPE_STYLE: Record<InsightCardData["type"], string> = {
-  anomaly: "bg-red-50 text-red-600",
-  trend: "bg-blue-50 text-blue-600",
-  recommendation: "bg-amber-50 text-amber-600"
+  anomaly: "bg-red-500/15 text-red-300",
+  trend: "bg-violet-500/15 text-violet-300",
+  recommendation: "bg-amber-500/15 text-amber-300"
 };
 
 const InsightCard = ({ item }: { item: InsightCardData }) => {
   const Icon = TYPE_ICON[item.type];
 
   return (
-      <div className="rounded-xl bg-slate-50 p-3.5">
+      <div className="rounded-xl bg-white/[0.04] p-3.5">
         <div className="mb-2 flex items-center justify-between">
         <span
             className={cn(
@@ -1229,15 +1229,15 @@ const InsightCard = ({ item }: { item: InsightCardData }) => {
           <Icon className="h-3.5 w-3.5" />
           {TYPE_LABEL[item.type]}
         </span>
-          <span className="text-[11px] text-slate-400">{item.timestamp}</span>
+          <span className="text-[11px] text-zinc-500">{item.timestamp}</span>
         </div>
-        <p className="text-sm font-semibold text-slate-800">{item.title}</p>
-        <p className="mt-1 text-xs text-slate-500">
+        <p className="text-sm font-semibold text-zinc-300">{item.title}</p>
+        <p className="mt-1 text-xs text-zinc-400">
           {item.metric}: {item.change}
         </p>
-        <p className="mt-0.5 text-xs text-slate-400">归因：{item.context}</p>
+        <p className="mt-0.5 text-xs text-zinc-500">归因：{item.context}</p>
         {item.action && (
-            <p className="mt-1 text-xs font-medium text-slate-600">建议：{item.action}</p>
+            <p className="mt-1 text-xs font-medium text-zinc-300">建议：{item.action}</p>
         )}
       </div>
   );

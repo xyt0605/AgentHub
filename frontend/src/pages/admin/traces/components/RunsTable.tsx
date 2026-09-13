@@ -208,7 +208,7 @@ function BriefDialog({ run, onClose, onOpenDetail }: BriefDialogProps) {
       <DialogContent className="sm:max-w-[560px]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-3">
-            <LayoutPanelTop className="h-4 w-4 text-indigo-500" />
+            <LayoutPanelTop className="h-4 w-4 text-violet-300" />
             <span>链路概览</span>
             <StatusBadge status={run.status} />
           </DialogTitle>

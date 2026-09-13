@@ -17,14 +17,23 @@
 
 package com.nageoffer.ai.ragent;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
+import com.mzt.logapi.starter.annotation.EnableLogRecord;
+import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
-@SpringBootTest
-class RagentCoreApplicationTests {
-
-    @Test
-    void contextLoads() {
-    }
-
+/**
+ * rag 模块测试启动配置，注解镜像 bootstrap 的 AgenthubApplication
+ */
+@SpringBootApplication
+@EnableScheduling
+@EnableLogRecord(tenant = "agenthub", proxyTargetClass = true)
+@MapperScan(basePackages = {
+        "com.nageoffer.ai.ragent.rag.dao.mapper",
+        "com.nageoffer.ai.ragent.ingestion.dao.mapper",
+        "com.nageoffer.ai.ragent.knowledge.dao.mapper",
+        "com.nageoffer.ai.ragent.user.dao.mapper",
+        "com.nageoffer.ai.ragent.audit.dao.mapper"
+})
+public class TestAgenthubApplication {
 }

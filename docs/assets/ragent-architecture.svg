@@ -1,6 +1,6 @@
 <svg width="1600" height="980" viewBox="0 0 1600 980" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
-  <title id="title">Ragent 总体架构霓虹风</title>
-  <desc id="desc">霓虹风格的 Ragent 总体架构图，包含客户端、应用编排、RAG 主链路、入库流水线、模型路由、可观测与存储。</desc>
+  <title id="title">Agenthub 总体架构霓虹风</title>
+  <desc id="desc">霓虹风格的 Agenthub 总体架构图，包含客户端、应用编排、RAG 主链路、入库流水线、模型路由、可观测与存储。</desc>
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1600" y2="980" gradientUnits="userSpaceOnUse">
       <stop stop-color="#060B14"/>
@@ -22,7 +22,7 @@
   </defs>
   <rect width="1600" height="980" fill="url(#bg)"/>
   <rect width="1600" height="980" fill="url(#grid)" opacity="0.65"/>
-  <text x="56" y="74" fill="#E6F3FF" font-family="PingFang SC, Microsoft YaHei, Source Han Sans CN, sans-serif" font-size="40" font-weight="700">Ragent 总体架构</text>
+  <text x="56" y="74" fill="#E6F3FF" font-family="PingFang SC, Microsoft YaHei, Source Han Sans CN, sans-serif" font-size="40" font-weight="700">Agenthub 总体架构</text>
   <text x="56" y="108" fill="#8DA4C5" font-family="PingFang SC, Microsoft YaHei, Source Han Sans CN, sans-serif" font-size="18">RAG + MCP + Ingestion Pipeline + Model Routing</text>
   <!-- 客户端 -->
   <g>

@@ -21,7 +21,7 @@ final class InitializerContext implements AutoCloseable {
     private final Path agentTypeDir;
     private final InitializerConfig config;
     private final InitializerDataset dataset;
-    private final RagentHttpClient http;
+    private final AgenthubHttpClient http;
     private final JdbcClient jdbc;
     private final RedisRespClient redis;
     private final boolean dryRun;
@@ -29,7 +29,7 @@ final class InitializerContext implements AutoCloseable {
     private final String confirmation;
     private final String runId = UUID.randomUUID().toString();
     private final Map<String, KnowledgeBaseRuntime> knowledgeBases = new HashMap<>();
-    private RagentHttpClient.LoginSession loginSession;
+    private AgenthubHttpClient.LoginSession loginSession;
 
     private InitializerContext(Path agentTypeDir, InitializerConfig config, InitializerDataset dataset,
                                boolean dryRun, boolean skipWarmup, String confirmation) {
@@ -39,7 +39,7 @@ final class InitializerContext implements AutoCloseable {
         this.dryRun = dryRun;
         this.skipWarmup = skipWarmup;
         this.confirmation = confirmation;
-        this.http = new RagentHttpClient(config);
+        this.http = new AgenthubHttpClient(config);
         this.jdbc = new JdbcClient(config);
         this.redis = new RedisRespClient(config);
     }
@@ -86,7 +86,7 @@ final class InitializerContext implements AutoCloseable {
         return dataset;
     }
 
-    RagentHttpClient http() {
+    AgenthubHttpClient http() {
         return http;
     }
 
@@ -145,7 +145,7 @@ final class InitializerContext implements AutoCloseable {
         try {
             http.close();
         } catch (RuntimeException ex) {
-            failure = new IOException("退出 Ragent 登录失败", ex);
+            failure = new IOException("退出 Agenthub 登录失败", ex);
         }
         try {
             jdbc.close();
