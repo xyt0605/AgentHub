@@ -21,6 +21,8 @@ import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import com.nageoffer.ai.ragent.framework.context.UserContext;
 import com.nageoffer.ai.ragent.infra.chat.StreamCallback;
+import com.nageoffer.ai.ragent.rag.config.OrchestrationMode;
+import com.nageoffer.ai.ragent.rag.service.engine.ChatEngine;
 import com.nageoffer.ai.ragent.rag.service.ratelimit.ChatQueueLimiter;
 import com.nageoffer.ai.ragent.rag.service.RAGChatService;
 import com.nageoffer.ai.ragent.rag.service.handler.StreamCallbackFactory;
@@ -39,7 +41,13 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class RAGChatServiceImpl implements RAGChatService {
+public class RAGChatServiceImpl implements RAGChatService, ChatEngine {
+
+    @Override
+    public OrchestrationMode mode() {
+        return OrchestrationMode.WORKFLOW;
+    }
+
 
     private final StreamChatPipeline chatPipeline;
     private final ChatQueueLimiter chatQueueLimiter;
@@ -49,6 +57,12 @@ public class RAGChatServiceImpl implements RAGChatService {
 
     @Override
     public void streamChat(String question, String conversationId, Boolean deepThinking, SseEmitter emitter) {
+        streamChat(question, conversationId, deepThinking, null, null, emitter);
+    }
+
+    @Override
+    public void streamChat(String question, String conversationId, Boolean deepThinking,
+                           String preferredModelId, String tierKey, SseEmitter emitter) {
         String actualConversationId = StrUtil.isBlank(conversationId) ? IdUtil.getSnowflakeNextIdStr() : conversationId;
         String taskId = IdUtil.getSnowflakeNextIdStr();
         StreamCallback callback = callbackFactory.createChatEventHandler(emitter, actualConversationId, taskId);
@@ -60,6 +74,8 @@ public class RAGChatServiceImpl implements RAGChatService {
                             .conversationId(actualConversationId)
                             .taskId(taskId)
                             .deepThinking(Boolean.TRUE.equals(deepThinking))
+                            .preferredModelId(preferredModelId)
+                            .tierKey(tierKey)
                             .userId(UserContext.getUserId())
                             .callback(traceAware)
                             .build();

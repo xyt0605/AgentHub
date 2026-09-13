@@ -79,7 +79,8 @@ public class RoutingLLMService implements LLMService {
     public String chat(ChatRequest request) {
         return executor.executeWithFallback(
                 ModelCapability.CHAT,
-                selector.selectChatCandidates(Boolean.TRUE.equals(request.getThinking())),
+                selector.selectChatCandidates(Boolean.TRUE.equals(request.getThinking()),
+                        resolveTierOverride(request), request.getPreferredModelId()),
                 target -> clientsByProvider.get(target.candidate().getProvider()),
                 (client, target) -> client.chat(request, target)
         );
@@ -110,10 +111,28 @@ public class RoutingLLMService implements LLMService {
         );
     }
 
+    /**
+     * 解析请求携带的档位覆盖（fast / standard / deep），无效或缺省返回 null 走默认档位解析
+     */
+    private Tier resolveTierOverride(ChatRequest request) {
+        String tierKey = request.getTierKey();
+        if (!StringUtils.hasText(tierKey)) {
+            return null;
+        }
+        for (Tier tier : Tier.values()) {
+            if (tier.getKey().equalsIgnoreCase(tierKey.trim())) {
+                return tier;
+            }
+        }
+        log.warn("未知档位覆盖，忽略并走默认档位: tierKey={}", tierKey);
+        return null;
+    }
+
     @Override
     @RagTraceNode(name = "llm-stream-routing", type = "LLM_ROUTING")
     public StreamCancellationHandle streamChat(ChatRequest request, StreamCallback callback) {
-        List<ModelTarget> targets = selector.selectChatCandidates(Boolean.TRUE.equals(request.getThinking()));
+        List<ModelTarget> targets = selector.selectChatCandidates(Boolean.TRUE.equals(request.getThinking()),
+                resolveTierOverride(request), request.getPreferredModelId());
         if (CollUtil.isEmpty(targets)) {
             throw new RemoteException(STREAM_NO_PROVIDER_MESSAGE);
         }

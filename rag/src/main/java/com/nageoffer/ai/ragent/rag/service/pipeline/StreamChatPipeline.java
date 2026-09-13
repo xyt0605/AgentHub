@@ -147,6 +147,7 @@ public class StreamChatPipeline {
                 .findFirst()
                 .orElse(null);
         StreamCancellationHandle handle = streamSystemResponse(
+                ctx,
                 ctx.getRewriteResult().rewrittenQuestion(),
                 ctx.getHistory(),
                 customPrompt,
@@ -189,6 +190,8 @@ public class StreamChatPipeline {
                 mergedGroup,
                 ctx.getHistory(),
                 ctx.isDeepThinking(),
+                ctx.getPreferredModelId(),
+                ctx.getTierKey(),
                 ctx.getCallback()
         );
         taskManager.bindHandle(ctx.getTaskId(), handle == null ? null : handle::cancel);
@@ -196,7 +199,8 @@ public class StreamChatPipeline {
 
     // ==================== LLM 响应 ====================
 
-    private StreamCancellationHandle streamSystemResponse(String question, List<ChatMessage> history,
+    private StreamCancellationHandle streamSystemResponse(StreamChatContext ctx, String question,
+                                                          List<ChatMessage> history,
                                                           String customPrompt, StreamCallback callback) {
         String systemPrompt = StrUtil.isNotBlank(customPrompt)
                 ? customPrompt
@@ -213,13 +217,16 @@ public class StreamChatPipeline {
                 .messages(messages)
                 .temperature(0.7D)
                 .thinking(false)
+                .preferredModelId(ctx.getPreferredModelId())
+                .tierKey(ctx.getTierKey())
                 .build();
         return llmService.streamChat(req, callback);
     }
 
     private StreamCancellationHandle streamLLMResponse(RewriteResult rewriteResult, RetrievalContext ctx,
                                                        IntentGroup intentGroup, List<ChatMessage> history,
-                                                       boolean deepThinking, StreamCallback callback) {
+                                                       boolean deepThinking, String preferredModelId, String tierKey,
+                                                       StreamCallback callback) {
         PromptContext promptContext = PromptContext.builder()
                 .question(rewriteResult.rewrittenQuestion())
                 .mcpContext(ctx.getMcpContext())
@@ -238,6 +245,8 @@ public class StreamChatPipeline {
         ChatRequest chatRequest = ChatRequest.builder()
                 .messages(messages)
                 .thinking(deepThinking)
+                .preferredModelId(preferredModelId)
+                .tierKey(tierKey)
                 .temperature(ctx.hasMcp() ? 0.3D : 0D)  // MCP 场景稍微放宽温度
                 .topP(ctx.hasMcp() ? 0.8D : 1D)
                 .build();

@@ -110,6 +110,21 @@ public class ChatRequest {
     private Boolean thinking;
 
     /**
+     * 可选：用户指定的首选模型 id（ai.chat.candidates 注册表中的 id）
+     * <p>
+     * 路由时置于候选队首，失败后回退所选档位的其余候选；为空表示交给默认档位路由
+     */
+    private String preferredModelId;
+
+    /**
+     * 可选：档位覆盖（fast / standard / deep）
+     * <p>
+     * 由前端"思考强度"选择器下发：deep 等价深度思考（会同时路由到深度思考档位），
+     * fast/standard 覆盖默认档位；为空走默认档位解析
+     */
+    private String tierKey;
+
+    /**
      * 可选：是否启用工具调用（Tool Calling / Function Calling）
      * <p>
      * 当前预留字段，方便后续扩展为带工具调用能力的对话请求：

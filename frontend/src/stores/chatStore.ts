@@ -20,9 +20,19 @@ import {
   cancelFeedback,
   generateRecommendedQuestions
 } from "@/services/chatService";
+import { getSystemSettings, type ModelCandidate } from "@/services/settingsService";
 import { buildQuery } from "@/utils/helpers";
 import { createStreamResponse } from "@/hooks/useStreamResponse";
 import { storage } from "@/utils/storage";
+
+export type ThinkingLevel = "balanced" | "fast" | "deep";
+
+export interface ChatModelOption {
+  id: string;
+  provider: string;
+  model: string;
+  supportsThinking: boolean;
+}
 
 interface ChatState {
   sessions: Session[];
@@ -34,6 +44,11 @@ interface ChatState {
   isStreaming: boolean;
   isCreatingNew: boolean;
   deepThinkingEnabled: boolean;
+  // 聊天输入框的模型与思考强度选择
+  chatModels: ChatModelOption[];
+  chatModelsLoaded: boolean;
+  selectedModelId: string; // 空串 = 自动（默认档位路由）
+  thinkingLevel: ThinkingLevel;
   thinkingStartAt: number | null;
   streamTaskId: string | null;
   streamAbort: (() => void) | null;
@@ -49,6 +64,9 @@ interface ChatState {
   selectSession: (sessionId: string) => Promise<void>;
   updateSessionTitle: (sessionId: string, title: string) => void;
   setDeepThinkingEnabled: (enabled: boolean) => void;
+  setSelectedModel: (modelId: string) => void;
+  setThinkingLevel: (level: ThinkingLevel) => void;
+  loadChatModels: () => Promise<void>;
   sendMessage: (content: string) => Promise<void>;
   cancelGeneration: () => void;
   appendStreamContent: (delta: string) => void;
@@ -100,6 +118,10 @@ export const useChatStore = create<ChatState>((set, get) => ({
   isStreaming: false,
   isCreatingNew: false,
   deepThinkingEnabled: false,
+  chatModels: [],
+  chatModelsLoaded: false,
+  selectedModelId: "",
+  thinkingLevel: "balanced",
   thinkingStartAt: null,
   streamTaskId: null,
   streamAbort: null,
@@ -251,11 +273,52 @@ export const useChatStore = create<ChatState>((set, get) => ({
   setDeepThinkingEnabled: (enabled) => {
     set({ deepThinkingEnabled: enabled });
   },
+  setSelectedModel: (modelId) => {
+    const state = get();
+    // 切到不支持思考的模型时，深度思考档自动回落均衡
+    if (modelId && state.thinkingLevel === "deep") {
+      const model = state.chatModels.find((m) => m.id === modelId);
+      if (model && !model.supportsThinking) {
+        set({ selectedModelId: modelId, thinkingLevel: "balanced" });
+        return;
+      }
+    }
+    set({ selectedModelId: modelId });
+  },
+  setThinkingLevel: (level) => {
+    const state = get();
+    if (level === "deep" && state.selectedModelId) {
+      const model = state.chatModels.find((m) => m.id === state.selectedModelId);
+      if (model && !model.supportsThinking) {
+        toast.error(`模型 ${model.id} 不支持深度思考，请先切换支持思考的模型`);
+        return;
+      }
+    }
+    set({ thinkingLevel: level });
+  },
+  loadChatModels: async () => {
+    if (get().chatModelsLoaded) return;
+    try {
+      const settings = await getSystemSettings();
+      const models: ChatModelOption[] = (settings.ai?.chat?.candidates ?? [])
+        .filter((c: ModelCandidate) => c.enabled !== false)
+        .map((c: ModelCandidate) => ({
+          id: c.id,
+          provider: c.provider,
+          model: c.model,
+          supportsThinking: Boolean(c.supportsThinking)
+        }));
+      set({ chatModels: models, chatModelsLoaded: true });
+    } catch (error) {
+      console.error("加载模型列表失败", error);
+    }
+  },
   sendMessage: async (content) => {
     const trimmed = content.trim();
     if (!trimmed) return;
     if (get().isStreaming) return;
-    const deepThinkingEnabled = get().deepThinkingEnabled;
+    const { selectedModelId, thinkingLevel } = get();
+    const deepThinkingEnabled = thinkingLevel === "deep";
     const inputFocusKey = Date.now();
 
     const userMessage: Message = {
@@ -299,7 +362,10 @@ export const useChatStore = create<ChatState>((set, get) => ({
     const query = buildQuery({
       question: trimmed,
       conversationId: conversationId || undefined,
-      deepThinking: deepThinkingEnabled ? true : undefined
+      deepThinking: deepThinkingEnabled ? true : undefined,
+      modelId: selectedModelId || undefined,
+      // deep 档由 deepThinking 表达，fast 档显式覆盖默认档位
+      thinkingLevel: thinkingLevel === "fast" ? "fast" : undefined
     });
     const url = `${API_BASE_URL}/rag/v3/chat${query}`;
     const token = storage.getToken();

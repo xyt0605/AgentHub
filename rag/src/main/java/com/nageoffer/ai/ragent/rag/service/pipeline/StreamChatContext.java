@@ -40,6 +40,16 @@ public class StreamChatContext {
     private final String conversationId;
     private final String taskId;
     private final boolean deepThinking;
+
+    /**
+     * 首选模型 id（用户在聊天输入框选择），空走默认路由
+     */
+    private final String preferredModelId;
+
+    /**
+     * 档位覆盖（fast / standard / deep），空走默认档位
+     */
+    private final String tierKey;
     private final String userId;
     private final StreamCallback callback;
 
