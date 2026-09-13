@@ -19,11 +19,13 @@ import { IngestionPage } from "@/pages/admin/ingestion/IngestionPage";
 import { RagTracePage } from "@/pages/admin/traces/RagTracePage";
 import { RagTraceDetailPage } from "@/pages/admin/traces/RagTraceDetailPage";
 import { SystemSettingsPage } from "@/pages/admin/settings/SystemSettingsPage";
+import { AiConfigPage } from "@/pages/admin/settings/AiConfigPage";
 import { SampleQuestionPage } from "@/pages/admin/sample-questions/SampleQuestionPage";
 import { QueryTermMappingPage } from "@/pages/admin/query-term-mapping/QueryTermMappingPage";
 import { AgentProfilePage } from "@/pages/admin/agents/AgentProfilePage";
 import { AgentPromptPage } from "@/pages/admin/agents/AgentPromptPage";
 import { UserListPage } from "@/pages/admin/users/UserListPage";
+import { RouteErrorBoundary } from "@/components/common/RouteErrorBoundary";
 import { useAuthStore } from "@/stores/authStore";
 
 function RequireAuth({ children }: { children: JSX.Element }) {
@@ -65,10 +67,12 @@ function HomeRedirect() {
 export const router = createBrowserRouter([
   {
     path: "/",
+    errorElement: <RouteErrorBoundary />,
     element: <HomeRedirect />
   },
   {
     path: "/login",
+    errorElement: <RouteErrorBoundary />,
     element: (
       <RedirectIfAuth>
         <LoginPage />
@@ -77,6 +81,7 @@ export const router = createBrowserRouter([
   },
   {
     path: "/chat",
+    errorElement: <RouteErrorBoundary />,
     element: (
       <RequireAuth>
         <ChatPage />
@@ -85,6 +90,7 @@ export const router = createBrowserRouter([
   },
   {
     path: "/chat/:sessionId",
+    errorElement: <RouteErrorBoundary />,
     element: (
       <RequireAuth>
         <ChatPage />
@@ -93,6 +99,7 @@ export const router = createBrowserRouter([
   },
   {
     path: "/change-logs",
+    errorElement: <RouteErrorBoundary />,
     element: (
       <RequireAuth>
         <ChangeLogsPage />
@@ -101,6 +108,7 @@ export const router = createBrowserRouter([
   },
   {
     path: "/preview/doc/:docId",
+    errorElement: <RouteErrorBoundary />,
     element: (
       <RequireAuth>
         <DocPreviewPage />
@@ -109,6 +117,7 @@ export const router = createBrowserRouter([
   },
   {
     path: "/admin",
+    errorElement: <RouteErrorBoundary />,
     element: (
       <RequireAdmin>
         <AdminLayout />
@@ -172,6 +181,10 @@ export const router = createBrowserRouter([
         element: <SystemSettingsPage />
       },
       {
+        path: "ai-config",
+        element: <AiConfigPage />
+      },
+      {
         path: "sample-questions",
         element: <SampleQuestionPage />
       },
@@ -195,6 +208,7 @@ export const router = createBrowserRouter([
   },
   {
     path: "*",
+    errorElement: <RouteErrorBoundary />,
     element: <NotFoundPage />
   }
 ]);

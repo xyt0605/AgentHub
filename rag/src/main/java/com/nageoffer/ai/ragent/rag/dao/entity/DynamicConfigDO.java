@@ -15,52 +15,39 @@
  * limitations under the License.
  */
 
-package com.nageoffer.ai.ragent.infra.enums;
+package com.nageoffer.ai.ragent.rag.dao.entity;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Data;
+
+import java.util.Date;
 
 /**
- * 模型提供商枚举
- * 统一管理提供商名称，避免散落的字符串常量
+ * 动态配置 DO
+ * 以 JSON 形式存储对 application.yaml 各配置命名空间的运行时覆盖
  */
-@Getter
-@RequiredArgsConstructor
-public enum ModelProvider {
+@Data
+@TableName("t_dynamic_config")
+public class DynamicConfigDO {
+
+    @TableId(type = IdType.ASSIGN_ID)
+    private String id;
 
     /**
-     * Ollama 本地模型服务
+     * 配置命名空间标识（ai / pipeline / agent 等）
      */
-    OLLAMA("ollama"),
+    private String configKey;
 
     /**
-     * 阿里云百炼大模型平台
+     * 配置 JSON 全量快照
      */
-    BAI_LIAN("bailian"),
+    private String configValue;
 
-    /**
-     * 硅基流动 AI 模型服务
-     */
-    SILICON_FLOW("siliconflow"),
+    private String updateBy;
 
-    /**
-     * 推理时代 AI 模型服务
-     */
-    AI_HUB_MIX("aihubmix"),
+    private Date createTime;
 
-    /**
-     * DeepSeek 开放平台（OpenAI 兼容）
-     */
-    DEEPSEEK("deepseek"),
-
-    /**
-     * 空实现，用于测试或占位
-     */
-    NOOP("noop");
-
-    private final String id;
-
-    public boolean matches(String provider) {
-        return provider != null && provider.equalsIgnoreCase(id);
-    }
+    private Date updateTime;
 }

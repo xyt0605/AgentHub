@@ -9,7 +9,6 @@ import {
   ClipboardList,
   Database,
   GitBranch,
-  Github,
   Layers,
   LayoutDashboard,
   Lightbulb,
@@ -21,6 +20,7 @@ import {
   Share2,
   ShieldCheck,
   Settings,
+  Sparkles,
   Upload,
   Users,
   FolderKanban,
@@ -39,6 +39,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { BrandMark } from "@/components/common/BrandMark";
 import { changePassword } from "@/services/userService";
 import {
   getKnowledgeBases,
@@ -165,6 +166,11 @@ const menuGroups: MenuGroup[] = [
         icon: Lightbulb
       },
       {
+        path: "/admin/ai-config",
+        label: "AI 配置",
+        icon: Sparkles
+      },
+      {
         path: "/admin/settings",
         label: "系统设置",
         icon: Settings
@@ -186,6 +192,7 @@ const breadcrumbMap: Record<string, string> = {
   "sample-questions": "示例问题",
   mappings: "关键词映射",
   settings: "系统设置",
+  "ai-config": "AI 配置",
   users: "用户管理"
 };
 
@@ -201,7 +208,6 @@ export function AdminLayout() {
     newPassword: "",
     confirmPassword: ""
   });
-  const [starCount, setStarCount] = useState<number | null>(null);
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({ ingestion: true, intent: true });
   const [kbQuery, setKbQuery] = useState("");
   const [kbOptions, setKbOptions] = useState<KnowledgeBase[]>([]);
@@ -218,25 +224,6 @@ export function AdminLayout() {
     await logout();
     navigate("/login");
   };
-
-  useEffect(() => {
-    let active = true;
-    fetch("https://api.github.com/repos/nageoffer/ragent")
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data) => {
-        if (!active) return;
-        const count = typeof data?.stargazers_count === "number" ? data.stargazers_count : null;
-        setStarCount(count);
-      })
-      .catch(() => {
-        if (active) {
-          setStarCount(null);
-        }
-      });
-    return () => {
-      active = false;
-    };
-  }, []);
 
   useEffect(() => {
     if (!searchFocused) return;
@@ -346,13 +333,6 @@ export function AdminLayout() {
   const avatarUrl = user?.avatar?.trim();
   const showAvatar = Boolean(avatarUrl);
   const roleLabel = user?.role === "admin" ? "管理员" : "成员";
-  const starLabel = useMemo(() => {
-    if (starCount === null) return "--";
-    if (starCount < 1000) return String(starCount);
-    const rounded = Math.round((starCount / 1000) * 10) / 10;
-    const text = String(rounded).replace(/\.0$/, "");
-    return `${text}k`;
-  }, [starCount]);
   const isIngestionActive = location.pathname.startsWith("/admin/ingestion");
   const isIntentActive =
     location.pathname.startsWith("/admin/intent-tree") || location.pathname.startsWith("/admin/intent-list");
@@ -468,18 +448,19 @@ export function AdminLayout() {
         <div className="admin-sidebar__brand">
           <div className={cn("flex items-center gap-3", collapsed && "justify-center")}>
             <div className="admin-sidebar__logo">
-              <Bot className="h-[22px] w-[22px]" />
+              <BrandMark className="h-10 w-10" />
             </div>
             {!collapsed && (
               <div className="min-w-0">
-                <h1 className="admin-sidebar__title">Ragent AI 管理后台</h1>
+                <h1 className="admin-sidebar__title">Agenthub 管理后台</h1>
                 <p className="admin-sidebar__subtitle">Knowledge Console</p>
               </div>
             )}
           </div>
         </div>
 
-        <nav className="flex-1 space-y-4 px-2 pb-4">
+        {/* min-h-0 允许 flex 子项收缩：菜单超出视口高度时侧边栏内部滚动，而不是裁掉底部菜单项 */}
+        <nav className="min-h-0 flex-1 space-y-4 overflow-y-auto px-2 pb-4">
           {menuGroups.map((group) => (
             <div key={group.title} className="space-y-2">
               {!collapsed && (
@@ -635,7 +616,7 @@ export function AdminLayout() {
                 <Menu className="h-5 w-5" />
               </Button>
               <div className="admin-topbar-search">
-                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
                 <Input
                   ref={searchInputRef}
                   value={kbQuery}
@@ -660,7 +641,7 @@ export function AdminLayout() {
                     onMouseDown={(event) => event.preventDefault()}
                   >
                     {searchLoading && kbOptions.length === 0 && docOptions.length === 0 ? (
-                      <div className="admin-topbar-suggest-item text-slate-400">搜索中...</div>
+                      <div className="admin-topbar-suggest-item text-zinc-500">搜索中...</div>
                     ) : null}
                     {kbOptions.length > 0 ? (
                       <div className="admin-topbar-suggest-section">
@@ -675,8 +656,8 @@ export function AdminLayout() {
                             }}
                             className="admin-topbar-suggest-item"
                           >
-                            <span className="font-medium text-slate-900">{kb.name}</span>
-                            <span className="text-xs text-slate-400">
+                            <span className="font-medium text-zinc-100">{kb.name}</span>
+                            <span className="text-xs text-zinc-500">
                               {kb.collectionName || "未设置 Collection"}
                             </span>
                           </button>
@@ -696,8 +677,8 @@ export function AdminLayout() {
                             }}
                             className="admin-topbar-suggest-item"
                           >
-                            <span className="font-medium text-slate-900">{doc.docName}</span>
-                            <span className="text-xs text-slate-400">
+                            <span className="font-medium text-zinc-100">{doc.docName}</span>
+                            <span className="text-xs text-zinc-500">
                               {doc.kbName || `知识库 ${doc.kbId}`}
                             </span>
                           </button>
@@ -705,7 +686,7 @@ export function AdminLayout() {
                       </div>
                     ) : null}
                     {!searchLoading && kbOptions.length === 0 && docOptions.length === 0 ? (
-                      <div className="admin-topbar-suggest-item text-slate-400">暂无匹配结果</div>
+                      <div className="admin-topbar-suggest-item text-zinc-500">暂无匹配结果</div>
                     ) : null}
                   </div>
                 ) : null}
@@ -720,37 +701,24 @@ export function AdminLayout() {
                 <MessageSquare className="h-4 w-4" />
                 返回聊天
               </Button>
-              <a
-                href="https://github.com/nageoffer/ragent"
-                target="_blank"
-                rel="noreferrer"
-                className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-sm text-slate-600 transition hover:bg-slate-100 hover:text-slate-900"
-                aria-label="打开 GitHub 仓库"
-              >
-                <Github className="h-4 w-4" />
-                <span className="font-medium">Star</span>
-                <span className="rounded-full bg-slate-100 px-2 py-0.5 text-xs text-slate-600">
-                  {starLabel}
-                </span>
-              </a>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button
                     type="button"
-                    className="flex items-center gap-2 rounded-full border border-slate-200 bg-white px-2.5 py-1.5 text-sm text-slate-600 shadow-sm"
+                    className="flex items-center gap-2 rounded-full border border-white/10 bg-[#0d1424] px-2.5 py-1.5 text-sm text-zinc-300 shadow-sm"
                     aria-label="用户菜单"
                   >
                     <Avatar
                       name={user?.username || "管理员"}
                       src={showAvatar ? avatarUrl : undefined}
-                      className="h-8 w-8 border-slate-200 bg-indigo-50 text-xs font-semibold text-indigo-600"
+                      className="h-8 w-8 border-white/10 bg-violet-500/15 text-xs font-semibold text-violet-300"
                     />
                     <span className="hidden sm:inline">{user?.username || "管理员"}</span>
-                    <ChevronDown className="h-4 w-4 text-slate-400" />
+                    <ChevronDown className="h-4 w-4 text-zinc-500" />
                   </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" sideOffset={8} className="w-44">
-                  <div className="px-3 py-2 text-xs text-slate-500">
+                  <div className="px-3 py-2 text-xs text-zinc-400">
                     {user?.username || "管理员"} · {roleLabel}
                   </div>
                   <DropdownMenuSeparator />
@@ -758,7 +726,7 @@ export function AdminLayout() {
                     <KeyRound className="mr-2 h-4 w-4" />
                     修改密码
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={handleLogout} className="text-rose-600 focus:text-rose-600">
+                  <DropdownMenuItem onClick={handleLogout} className="text-rose-300 focus:text-rose-300">
                     <LogOut className="mr-2 h-4 w-4" />
                     退出登录
                   </DropdownMenuItem>
@@ -778,7 +746,7 @@ export function AdminLayout() {
                     {item.to && !isLast ? (
                       <Link to={item.to}>{item.label}</Link>
                     ) : (
-                      <span className={isLast ? "text-slate-700" : undefined}>{item.label}</span>
+                      <span className={isLast ? "text-zinc-300" : undefined}>{item.label}</span>
                     )}
                     {!isLast && <span>/</span>}
                   </span>
@@ -806,7 +774,7 @@ export function AdminLayout() {
           </DialogHeader>
           <div className="space-y-3">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-700">当前密码</label>
+              <label className="text-sm font-medium text-zinc-300">当前密码</label>
               <Input
                 type="password"
                 value={passwordForm.currentPassword}
@@ -817,7 +785,7 @@ export function AdminLayout() {
               />
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-700">新密码</label>
+              <label className="text-sm font-medium text-zinc-300">新密码</label>
               <Input
                 type="password"
                 value={passwordForm.newPassword}
@@ -828,7 +796,7 @@ export function AdminLayout() {
               />
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-700">确认新密码</label>
+              <label className="text-sm font-medium text-zinc-300">确认新密码</label>
               <Input
                 type="password"
                 value={passwordForm.confirmPassword}

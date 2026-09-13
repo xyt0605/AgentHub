@@ -15,52 +15,45 @@
  * limitations under the License.
  */
 
-package com.nageoffer.ai.ragent.infra.enums;
+package com.nageoffer.ai.ragent.rag.controller.vo;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.Date;
 
 /**
- * 模型提供商枚举
- * 统一管理提供商名称，避免散落的字符串常量
+ * 动态配置命名空间摘要 VO
  */
-@Getter
-@RequiredArgsConstructor
-public enum ModelProvider {
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class DynamicConfigNamespaceVO {
 
     /**
-     * Ollama 本地模型服务
+     * 命名空间标识
      */
-    OLLAMA("ollama"),
+    private String key;
 
     /**
-     * 阿里云百炼大模型平台
+     * 展示名称
      */
-    BAI_LIAN("bailian"),
+    private String label;
 
     /**
-     * 硅基流动 AI 模型服务
+     * 命名空间说明
      */
-    SILICON_FLOW("siliconflow"),
+    private String description;
 
     /**
-     * 推理时代 AI 模型服务
+     * 是否存在数据库覆盖（false = 当前值来自 yaml 默认）
      */
-    AI_HUB_MIX("aihubmix"),
+    private Boolean overridden;
 
-    /**
-     * DeepSeek 开放平台（OpenAI 兼容）
-     */
-    DEEPSEEK("deepseek"),
+    private String updateBy;
 
-    /**
-     * 空实现，用于测试或占位
-     */
-    NOOP("noop");
-
-    private final String id;
-
-    public boolean matches(String provider) {
-        return provider != null && provider.equalsIgnoreCase(id);
-    }
+    private Date updateTime;
 }
