@@ -81,7 +81,11 @@ docker exec -i postgres psql -U postgres -d ragent < resources/database/init_dat
 ### 3.3 启动应用
 
 ```bash
-# 后端（打包前必须停掉旧进程，否则 Windows 下 jar 被锁导致 repackage 失败）
+# 一键启动（推荐）：容器检查与保活 -> 端口预检（残留进程自愈）-> 后端 -> 前端 -> 探活
+# 已运行的服务自动跳过；--build 打包后启动；--restart 强制重启；--backend-only 只起后端
+scripts/start-dev.sh                # 日志输出到 scripts/logs/backend.log / frontend.log
+
+# 手动方式（打包前必须停掉旧进程，否则 Windows 下 jar 被锁导致 repackage 失败）
 ./mvnw clean package -DskipTests
 java -jar bootstrap/target/bootstrap-0.0.1-SNAPSHOT.jar                          # workflow 模式
 java -jar bootstrap/target/bootstrap-0.0.1-SNAPSHOT.jar --agenthub.engine.type=agent   # agent 模式
@@ -264,5 +268,5 @@ RAGChatController (/rag/v3/chat)
 1. **AI 配置页简化**：低频区块（Embedding/Rerank/VLM、检索管线）默认折叠，首屏聚焦供应商密钥与模型选择（用户反馈"眼花缭乱"）
 2. **模型/思考强度选择持久化**：当前刷新回"自动"，记 localStorage（按用户维度）
 3. **关键路径自动化测试**：密钥掩码回退、信封解包、能力校验、漏斗校验（本次全靠手工 curl，曾出信封事故）
-4. **一键启动脚本**：容器健康检查 → WSL 保活 → 后端 → 前端 → 探活，把 §3/§10 的启动知识固化
+4. ~~**一键启动脚本**~~：已完成（`scripts/start-dev.sh`，支持 --build / --restart / --backend-only，含残留进程自愈；2026-09-14）
 5. **AiConfigPage.tsx 拆分**（约 1200 行）：按命名空间拆组件文件
