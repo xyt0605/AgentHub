@@ -86,12 +86,18 @@ public class MultiChannelRetrievalEngine {
             return KnowledgeRetrievalResult.empty();
         }
 
+        List<String> channelFailures = channelResults.stream()
+                .filter(SearchChannelResult::isFailed)
+                .map(result -> result.getChannelName() + ": " + result.getFailureReason())
+                .toList();
+
         List<RetrievedChunk> chunks = executePostProcessors(channelResults, context);
         // 异常或超时导致定向证据为空时，保留的定向范围会使其按未命中处理
         return new KnowledgeRetrievalResult(
                 chunks,
                 deriveAttribution(chunks, context.getRetrievalScope()),
-                context.getRetrievalScope().directedIntentIds());
+                context.getRetrievalScope().directedIntentIds(),
+                channelFailures);
     }
 
     /**
@@ -155,7 +161,7 @@ public class MultiChannelRetrievalEngine {
                                 return channel.search(context);
                             } catch (Exception e) {
                                 log.error("检索通道 {} 执行失败", channel.getName(), e);
-                                return channel.emptyResult(0);
+                                return channel.failedResult(0, SearchChannel.describeFailure(e));
                             }
                         },
                         ragRetrievalExecutor
@@ -175,7 +181,14 @@ public class MultiChannelRetrievalEngine {
             int chunkCount = result.getChunks().size();
             totalChunks += chunkCount;
 
-            if (chunkCount > 0) {
+            if (result.isFailed()) {
+                failureCount++;
+                log.warn("通道 {} 故障交空卷 ✗ - 原因：{}，耗时：{}ms",
+                        result.getChannelName(),
+                        result.getFailureReason(),
+                        result.getLatencyMs()
+                );
+            } else if (chunkCount > 0) {
                 successCount++;
                 log.info("通道 {} 完成 ✓ - 检索到 {} 个 Chunk，耗时：{}ms",
                         result.getChannelName(),
@@ -183,15 +196,15 @@ public class MultiChannelRetrievalEngine {
                         result.getLatencyMs()
                 );
             } else {
-                failureCount++;
-                log.warn("通道 {} 完成但无结果 - 耗时：{}ms",
+                successCount++;
+                log.info("通道 {} 完成 ✓ - 正常执行但无匹配内容，耗时：{}ms",
                         result.getChannelName(),
                         result.getLatencyMs()
                 );
             }
         }
 
-        log.info("多通道检索统计 - 总通道数: {}, 有结果: {}, 无结果: {}, Chunk 总数: {}",
+        log.info("多通道检索统计 - 总通道数: {}, 正常: {}, 故障: {}, Chunk 总数: {}",
                 enabledChannels.size(), successCount, failureCount, totalChunks);
 
         return results;
@@ -254,10 +267,10 @@ public class MultiChannelRetrievalEngine {
                     Throwable cause = e instanceof CompletionException && e.getCause() != null ? e.getCause() : e;
                     if (cause instanceof TimeoutException) {
                         log.warn("检索通道 {} 超过通道级超时 {}ms，放弃其结果，其余通道照常融合", channel.getName(), timeoutMs);
-                    } else {
-                        log.error("检索通道 {} 异步执行失败", channel.getName(), cause);
+                        return channel.failedResult(timeoutMs, "通道超时（>" + timeoutMs + "ms）");
                     }
-                    return channel.emptyResult(0);
+                    log.error("检索通道 {} 异步执行失败", channel.getName(), cause);
+                    return channel.failedResult(0, SearchChannel.describeFailure(cause));
                 });
     }
 

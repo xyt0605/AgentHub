@@ -42,6 +42,7 @@ import com.nageoffer.ai.ragent.rag.core.source.SourcesAssembler;
 import com.nageoffer.ai.ragent.rag.dto.IntentGroup;
 import com.nageoffer.ai.ragent.rag.dto.RetrievalContext;
 import com.nageoffer.ai.ragent.rag.dto.SubQuestionIntent;
+import com.nageoffer.ai.ragent.rag.trace.StreamChatTraceRunner;
 import com.nageoffer.ai.ragent.framework.web.StreamTaskManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -75,6 +76,7 @@ public class StreamChatPipeline {
     private final SourcesAssembler sourcesAssembler;
     private final GroundingChunksAssembler groundingChunksAssembler;
     private final CitationContextEnricher citationContextEnricher;
+    private final StreamChatTraceRunner traceRunner;
 
     /**
      * 执行流式对话管道
@@ -92,6 +94,12 @@ public class StreamChatPipeline {
         }
 
         RetrievalContext retrievalCtx = retrieve(ctx);
+        // 故障与是否召回到内容正交：哪怕还有别的通道出了证据，这次的证据集也已不完整，
+        // 一律先落进 trace，再决定怎么回话
+        if (retrievalCtx.isDegraded()) {
+            log.error("检索链路故障，故障通道：{}", retrievalCtx.getChannelFailures());
+            markRunDegraded(retrievalCtx);
+        }
         if (handleEmptyRetrieval(ctx, retrievalCtx)) {
             return;
         }
@@ -166,9 +174,29 @@ public class StreamChatPipeline {
             return false;
         }
         StreamCallback callback = ctx.getCallback();
+        if (retrievalCtx.isDegraded()) {
+            // 检索没查成 ≠ 知识库里没有。沿用兜底文案会让鉴权失效、向量库不可达
+            // 伪装成「查无此文」：用户以为库里缺资料，实际是链路坏了，排查只能靠翻日志
+            callback.onContent("检索服务暂时不可用，未能完成本次知识库检索，请稍后重试或联系管理员。");
+            callback.onComplete();
+            return true;
+        }
         callback.onContent("未检索到与问题相关的文档内容。");
         callback.onComplete();
         return true;
+    }
+
+    /**
+     * 把降级写进 trace run，让链路追踪列表能直接筛出这类「答了，但答得不对劲」的请求
+     * <p>
+     * 必须在 onComplete 之前调用：onComplete 会触发 finishRun 收尾，晚于它写入就被 SUCCESS 覆盖
+     */
+    private void markRunDegraded(RetrievalContext retrievalCtx) {
+        try {
+            traceRunner.markDegraded(retrievalCtx.traceDegradedReason());
+        } catch (Exception e) {
+            log.warn("标记 trace 降级失败，不影响对话返回", e);
+        }
     }
 
     private void streamRagResponse(StreamChatContext ctx, RetrievalContext retrievalCtx) {

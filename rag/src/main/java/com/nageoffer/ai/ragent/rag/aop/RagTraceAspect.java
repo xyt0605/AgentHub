@@ -21,6 +21,7 @@ import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import com.nageoffer.ai.ragent.framework.trace.RagTraceContext;
 import com.nageoffer.ai.ragent.framework.trace.RagTraceNode;
+import com.nageoffer.ai.ragent.framework.trace.TraceDegradable;
 import com.nageoffer.ai.ragent.rag.config.RagTraceProperties;
 import com.nageoffer.ai.ragent.rag.dao.entity.RagTraceNodeDO;
 import com.nageoffer.ai.ragent.rag.service.RagTraceRecordService;
@@ -50,6 +51,7 @@ public class RagTraceAspect {
     private static final String STATUS_RUNNING = "RUNNING";
     private static final String STATUS_SUCCESS = "SUCCESS";
     private static final String STATUS_ERROR = "ERROR";
+    private static final String STATUS_DEGRADED = "DEGRADED";
 
     private final RagTraceRecordService traceRecordService;
     private final RagTraceProperties traceProperties;
@@ -88,11 +90,14 @@ public class RagTraceAspect {
         RagTraceContext.pushNode(nodeId);
         try {
             Object result = joinPoint.proceed();
+            // 方法没抛异常不等于这一步真的成功：检索类节点会把 embedding 401、向量库不可达
+            // 吞成空结果继续往下走，只有返回值自己能说出这件事，故按 TraceDegradable 分流
+            String degradedReason = resolveDegradedReason(result);
             traceRecordService.finishNode(
                     traceId,
                     nodeId,
-                    STATUS_SUCCESS,
-                    null,
+                    degradedReason == null ? STATUS_SUCCESS : STATUS_DEGRADED,
+                    degradedReason,
                     new Date(),
                     System.currentTimeMillis() - startMillis
             );
@@ -121,5 +126,20 @@ public class RagTraceAspect {
             return message;
         }
         return message.substring(0, traceProperties.getMaxErrorLength());
+    }
+
+    /**
+     * 读取返回值自报的降级原因，非 TraceDegradable 或未降级时返回 null
+     */
+    private String resolveDegradedReason(Object result) {
+        if (!(result instanceof TraceDegradable degradable)) {
+            return null;
+        }
+        String reason = degradable.traceDegradedReason();
+        if (StrUtil.isBlank(reason)) {
+            return null;
+        }
+        int max = traceProperties.getMaxErrorLength();
+        return reason.length() <= max ? reason : reason.substring(0, max);
     }
 }

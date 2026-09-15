@@ -55,6 +55,19 @@ public class SearchChannelResult {
     private long latencyMs;
 
     /**
+     * 本通道是否因技术故障交空卷（区别于「查到了，但一条都不匹配」）
+     * <p>
+     * 两者在 chunks 上完全同形，不显式标记就分不出「embedding 401 / 向量库不可达」
+     * 与「知识库里确实没这内容」，用户看到的兜底文案与 trace 状态也就只能二者取一
+     */
+    private boolean failed;
+
+    /**
+     * 故障原因（failed=true 时有值），供 trace 与日志归因，不直接示人
+     */
+    private String failureReason;
+
+    /**
      * 扩展元数据
      */
     @Builder.Default

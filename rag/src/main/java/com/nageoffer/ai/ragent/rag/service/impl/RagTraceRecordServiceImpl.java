@@ -35,6 +35,10 @@ import java.util.Date;
 @RequiredArgsConstructor
 public class RagTraceRecordServiceImpl implements RagTraceRecordService {
 
+    private static final String STATUS_RUNNING = "RUNNING";
+    private static final String STATUS_SUCCESS = "SUCCESS";
+    private static final String STATUS_DEGRADED = "DEGRADED";
+
     private final RagTraceRunMapper runMapper;
     private final RagTraceNodeMapper nodeMapper;
 
@@ -45,14 +49,34 @@ public class RagTraceRecordServiceImpl implements RagTraceRecordService {
 
     @Override
     public void finishRun(String traceId, String status, String errorMessage, Date endTime, long durationMs) {
+        // 成功收尾不能抹掉已经记下的 DEGRADED：那条记录正是「表面答完了、实则链路有故障」的唯一痕迹。
+        // 故成功路径先按「仅当状态仍是 RUNNING」写，未命中说明已降级，再补写一次纯耗时；
+        // 失败收尾无条件覆盖——ERROR 比 DEGRADED 更重
+        boolean preserveDegraded = STATUS_SUCCESS.equals(status);
         RagTraceRunDO update = RagTraceRunDO.builder()
                 .status(status)
                 .errorMessage(errorMessage)
                 .endTime(endTime)
                 .durationMs(durationMs)
                 .build();
-        runMapper.update(update, Wrappers.lambdaUpdate(RagTraceRunDO.class)
-                .eq(RagTraceRunDO::getTraceId, traceId));
+        int updated = runMapper.update(update, Wrappers.lambdaUpdate(RagTraceRunDO.class)
+                .eq(RagTraceRunDO::getTraceId, traceId)
+                .eq(preserveDegraded, RagTraceRunDO::getStatus, STATUS_RUNNING));
+        if (preserveDegraded && updated == 0) {
+            runMapper.update(
+                    RagTraceRunDO.builder().endTime(endTime).durationMs(durationMs).build(),
+                    Wrappers.lambdaUpdate(RagTraceRunDO.class)
+                            .eq(RagTraceRunDO::getTraceId, traceId));
+        }
+    }
+
+    @Override
+    public void markRunDegraded(String traceId, String reason) {
+        runMapper.update(
+                RagTraceRunDO.builder().status(STATUS_DEGRADED).errorMessage(reason).build(),
+                Wrappers.lambdaUpdate(RagTraceRunDO.class)
+                        .eq(RagTraceRunDO::getTraceId, traceId)
+                        .eq(RagTraceRunDO::getStatus, STATUS_RUNNING));
     }
 
     @Override

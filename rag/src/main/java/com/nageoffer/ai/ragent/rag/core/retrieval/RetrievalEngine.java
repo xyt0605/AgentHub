@@ -104,7 +104,12 @@ public class RetrievalEngine {
                                 return new SubQuestionContext(
                                         si.subQuestion(), "", "", Map.of(),
                                         KnowledgeRetrievalResult.empty().eligibleIntentIds(
-                                                NodeScoreFilters.kb(si.nodeScores())));
+                                                NodeScoreFilters.kb(si.nodeScores())),
+                                        // 整个子问题都没跑成，等价于所有通道同时故障，必须算降级：
+                                        // 否则这条路径产出的空上下文与「知识库没有」再次同形
+                                        List.of("子问题「" + si.subQuestion() + "」检索失败: "
+                                                + e.getClass().getSimpleName()
+                                                + (e.getMessage() == null ? "" : ": " + e.getMessage())));
                             }
                         },
                         ragContextExecutor
@@ -116,8 +121,10 @@ public class RetrievalEngine {
 
         Map<String, List<RetrievedChunk>> mergedIntentChunks = new LinkedHashMap<>();
         Set<String> eligibleIntentIds = new LinkedHashSet<>();
+        List<String> channelFailures = new ArrayList<>();
         for (SubQuestionContext context : contexts) {
             eligibleIntentIds.addAll(context.eligibleIntentIds());
+            channelFailures.addAll(context.channelFailures());
             if (CollUtil.isNotEmpty(context.intentChunks())) {
                 context.intentChunks().forEach((intentId, chunks) -> {
                     if (CollUtil.isEmpty(chunks)) {
@@ -164,6 +171,7 @@ public class RetrievalEngine {
                 .kbContext(kbContext)
                 .intentChunks(mergedIntentChunks)
                 .eligibleIntentIds(Set.copyOf(eligibleIntentIds))
+                .channelFailures(List.copyOf(channelFailures))
                 .build();
     }
 
@@ -178,7 +186,7 @@ public class RetrievalEngine {
                 : "";
 
         return new SubQuestionContext(intent.subQuestion(), kbResult.groupedContext(), mcpContext,
-                kbResult.intentChunks(), kbResult.eligibleIntentIds());
+                kbResult.intentChunks(), kbResult.eligibleIntentIds(), kbResult.channelFailures());
     }
 
     private void appendSection(StringBuilder builder, String section, int index, String question, String context) {
@@ -213,14 +221,14 @@ public class RetrievalEngine {
         Set<String> eligibleIntentIds = retrievalResult.eligibleIntentIds(kbIntents);
 
         if (CollUtil.isEmpty(chunks)) {
-            return new KbResult("", Map.of(), eligibleIntentIds);
+            return new KbResult("", Map.of(), eligibleIntentIds, retrievalResult.channelFailures());
         }
 
         Map<String, List<RetrievedChunk>> intentChunks = retrievalResult.groupByIntent(MULTI_CHANNEL_KEY);
 
         String groupedContext = contextFormatter.formatKbContext(
                 kbIntents, eligibleIntentIds, chunks, budget.contextTopK());
-        return new KbResult(groupedContext, intentChunks, eligibleIntentIds);
+        return new KbResult(groupedContext, intentChunks, eligibleIntentIds, retrievalResult.channelFailures());
     }
 
     /**
@@ -317,6 +325,7 @@ public class RetrievalEngine {
                                       String kbContext,
                                       String mcpContext,
                                       Map<String, List<RetrievedChunk>> intentChunks,
-                                      Set<String> eligibleIntentIds) {
+                                      Set<String> eligibleIntentIds,
+                                      List<String> channelFailures) {
     }
 }

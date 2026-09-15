@@ -4,7 +4,7 @@ export const PAGE_SIZE = 10;
 
 export type BadgeVariant = "default" | "secondary" | "destructive" | "outline";
 
-export type TraceStatus = "" | "success" | "failed" | "running";
+export type TraceStatus = "" | "success" | "failed" | "running" | "degraded";
 
 export type TraceFilters = {
   traceId: string;
@@ -32,6 +32,7 @@ export const STATUS_OPTIONS: { value: TraceStatus; label: string }[] = [
   { value: "", label: "全部状态" },
   { value: "running", label: "运行中" },
   { value: "success", label: "成功" },
+  { value: "degraded", label: "降级" },
   { value: "failed", label: "失败" }
 ];
 
@@ -44,6 +45,7 @@ export const statusLabel = (status?: string | null): string => {
   if (normalized === "failed") return "FAILED";
   if (normalized === "running") return "RUNNING";
   if (normalized === "timeout") return "TIMEOUT";
+  if (normalized === "degraded") return "DEGRADED";
   return normalized.toUpperCase();
 };
 
@@ -53,6 +55,16 @@ export const statusBadgeVariant = (status?: string | null): BadgeVariant => {
   if (normalized === "running") return "secondary";
   if (normalized === "success") return "default";
   return "outline";
+};
+
+/**
+ * 降级态需要与成功/失败都区分开：链路跑完了（不是 destructive），
+ * 但中途有组件故障被吞掉（不能和真正健康的 SUCCESS 同色），故单独给一档琥珀色
+ */
+export const statusBadgeClass = (status?: string | null): string => {
+  return normalizeStatus(status) === "degraded"
+    ? "border-amber-400/40 bg-amber-400/10 text-amber-300"
+    : "";
 };
 
 export const toTimestamp = (value?: string | number | null): number | null => {

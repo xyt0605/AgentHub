@@ -132,12 +132,24 @@ export interface PipelineConfigPayload {
 
 // ==================== 供应商连通性测试 ====================
 
+/** 单个 embedding / rerank 候选模型的真实调用结果 */
+export interface CapabilityProbeResult {
+  capability: string;
+  modelId: string;
+  model: string;
+  ok: boolean;
+  latencyMs: number;
+  message: string;
+}
+
 export interface ProviderTestResult {
   ok: boolean;
   status: number;
   latencyMs: number;
   message: string;
   modelsUrl: string;
+  /** 各向量 / 精排候选的实测结果；/models 不通或该供应商无此类候选时为空 */
+  capabilities?: CapabilityProbeResult[] | null;
 }
 
 // ==================== API ====================

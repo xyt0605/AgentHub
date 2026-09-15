@@ -105,7 +105,7 @@ public class KeywordSearchChannel implements SearchChannel {
                     .build();
         } catch (Exception e) {
             log.error("关键词检索失败", e);
-            return emptyResult(System.currentTimeMillis() - startTime);
+            return failedResult(System.currentTimeMillis() - startTime, SearchChannel.describeFailure(e));
         }
     }
 

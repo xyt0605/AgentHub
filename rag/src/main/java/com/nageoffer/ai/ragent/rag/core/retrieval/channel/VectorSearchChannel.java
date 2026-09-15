@@ -97,7 +97,7 @@ public class VectorSearchChannel implements SearchChannel {
 
         } catch (Exception e) {
             log.error("向量检索失败", e);
-            return emptyResult(System.currentTimeMillis() - startTime);
+            return failedResult(System.currentTimeMillis() - startTime, SearchChannel.describeFailure(e));
         }
     }
 

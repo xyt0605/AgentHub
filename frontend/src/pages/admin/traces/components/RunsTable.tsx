@@ -10,7 +10,7 @@ import {
   DialogTitle
 } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { CheckCircle2, Copy, Eye, LayoutPanelTop, Loader2, XCircle } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Copy, Eye, LayoutPanelTop, Loader2, XCircle } from "lucide-react";
 import { toast } from "sonner";
 import { RelativeTime } from "@/components/RelativeTime";
 import {
@@ -24,6 +24,7 @@ import {
   normalizeStatus,
   prettifyNodeName,
   resolveNodeDuration,
+  statusBadgeClass,
   statusBadgeVariant,
   statusLabel
 } from "@/pages/admin/traces/traceUtils";
@@ -58,10 +59,14 @@ const StatusBadge = ({ status }: { status?: string | null }) => {
   let Icon = CheckCircle2;
   if (normalized === "failed" || normalized === "timeout") Icon = XCircle;
   else if (normalized === "running") Icon = Loader2;
+  else if (normalized === "degraded") Icon = AlertTriangle;
 
   const isRunning = normalized === "running";
   return (
-    <Badge className="trace-list-status-badge" variant={statusBadgeVariant(status)}>
+    <Badge
+      className={`trace-list-status-badge ${statusBadgeClass(status)}`.trim()}
+      variant={statusBadgeVariant(status)}
+    >
       <Icon className={`h-3 w-3 ${isRunning ? "animate-spin" : ""}`} />
       <span>{statusLabel(status)}</span>
     </Badge>

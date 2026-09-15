@@ -34,9 +34,14 @@ import java.time.Duration;
 /**
  * 供应商连通性测试器
  * <p>
- * 对 OpenAI 兼容端点发起 GET {base}/models 列表请求（零 token 消耗），
+ * 两段式：先对 OpenAI 兼容端点发起 GET {base}/models 列表请求（零 token 消耗），
  * 校验 URL 可达性与 API Key 有效性；models 路径按 chat 端点同构推导，
- * 如 bailian 的 /compatible-mode/v1/chat/completions → /compatible-mode/v1/models
+ * 如 bailian 的 /compatible-mode/v1/chat/completions → /compatible-mode/v1/models。
+ * <p>
+ * 随后按该供应商名下登记的 embedding / rerank 候选逐个发一次最小真实调用
+ * （见 {@link ProviderCapabilityProbe}）。只测 /models 是不够的：它证明不了
+ * /embeddings 端点通不通、账号对某个向量模型有没有权限，而这两件事恰恰是
+ * 检索链路的命门——曾出现过面板全绿、问答却一路「未检索到」的组合
  */
 @Slf4j
 @Component
@@ -48,6 +53,7 @@ public class ProviderConnectivityTester {
 
     private final AIModelProperties aiModelProperties;
     private final com.fasterxml.jackson.databind.ObjectMapper objectMapper;
+    private final ProviderCapabilityProbe capabilityProbe;
 
     private final HttpClient httpClient = HttpClient.newBuilder()
             .connectTimeout(Duration.ofSeconds(5))
@@ -89,7 +95,8 @@ public class ProviderConnectivityTester {
             HttpResponse<String> response = httpClient.send(requestBuilder.build(), HttpResponse.BodyHandlers.ofString());
             long latencyMs = System.currentTimeMillis() - start;
             int status = response.statusCode();
-            return buildResult(status, latencyMs, response.body(), providerName, modelsUrl);
+            ProviderTestResult result = buildResult(status, latencyMs, response.body(), providerName, modelsUrl);
+            return withCapabilityProbes(result, providerName, apiKey);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new ClientException("连通性测试被中断");
@@ -103,8 +110,47 @@ public class ProviderConnectivityTester {
                     .latencyMs(latencyMs)
                     .message("网络不可达或连接超时：" + e.getMessage())
                     .modelsUrl(modelsUrl)
+                    .capabilities(java.util.List.of())
                     .build();
         }
+    }
+
+    /**
+     * 在 /models 结论之上补测 embedding / rerank 实际端点
+     * <p>
+     * 只有 /models 这一关过了才值得往下测：URL 都不通时逐个模型再撞一遍网络超时，
+     * 只会让用户多等十几秒看同一个错。任一候选失败即把整体 ok 压成 false——
+     * 「密钥有效」但向量模型 401 的供应商不该显示为绿勾，那正是这次要消灭的假绿
+     */
+    private ProviderTestResult withCapabilityProbes(ProviderTestResult result, String providerName, String apiKey) {
+        if (!result.isOk()) {
+            result.setCapabilities(java.util.List.of());
+            return result;
+        }
+        java.util.List<ProviderCapabilityProbe.CapabilityProbeResult> probes;
+        try {
+            probes = capabilityProbe.probe(providerName, apiKey);
+        } catch (Exception e) {
+            // 探针自身异常不能否定已经拿到的 /models 结论
+            log.warn("供应商能力探测异常: provider={}", providerName, e);
+            result.setCapabilities(java.util.List.of());
+            return result;
+        }
+        result.setCapabilities(probes);
+        if (probes.isEmpty()) {
+            return result;
+        }
+        java.util.List<String> failed = probes.stream()
+                .filter(probe -> !probe.isOk())
+                .map(probe -> probe.getCapability() + " " + probe.getModelId())
+                .toList();
+        if (!failed.isEmpty()) {
+            result.setOk(false);
+            result.setMessage(result.getMessage() + "；但 " + String.join("、", failed) + " 调用失败");
+        } else {
+            result.setMessage(result.getMessage() + "；" + probes.size() + " 个向量 / 精排模型调用正常");
+        }
+        return result;
     }
 
     /**
@@ -256,5 +302,11 @@ public class ProviderConnectivityTester {
         private long latencyMs;
         private String message;
         private String modelsUrl;
+
+        /**
+         * 各 embedding / rerank 候选的实际调用结果，空表示该供应商名下没有登记这类模型
+         */
+        @lombok.Builder.Default
+        private java.util.List<ProviderCapabilityProbe.CapabilityProbeResult> capabilities = java.util.List.of();
     }
 }

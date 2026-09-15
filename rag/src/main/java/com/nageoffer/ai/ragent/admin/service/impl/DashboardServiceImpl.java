@@ -58,6 +58,7 @@ public class DashboardServiceImpl implements DashboardService {
 
     private static final String STATUS_SUCCESS = "SUCCESS";
     private static final String STATUS_ERROR = "ERROR";
+    private static final String STATUS_DEGRADED = "DEGRADED";
     private static final String ROLE_ASSISTANT = "assistant";
     private static final String NO_DOC_REPLY = "未检索到与问题相关的文档内容。";
     private static final String GRANULARITY_DAY = "day";
@@ -114,7 +115,10 @@ public class DashboardServiceImpl implements DashboardService {
 
         long success = countTraceRuns(range.start, range.end, STATUS_SUCCESS);
         long error = countTraceRuns(range.start, range.end, STATUS_ERROR);
-        long total = success + error;
+        // 降级run 必须进分母：它是「跑完了但链路有故障」，既不算成功也不算失败，
+        // 漏掉它等于把这类请求从统计里抹去，成功率反而会因为故障变多而虚高
+        long degraded = countTraceRuns(range.start, range.end, STATUS_DEGRADED);
+        long total = success + error + degraded;
         long assistantCount = countAssistantMessages(range.start, range.end);
         long noDocCount = countNoDocMessages(range.start, range.end);
         long slowCount = durations.stream().filter(duration -> duration > SLOW_LATENCY_THRESHOLD_MS).count();

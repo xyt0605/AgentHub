@@ -32,6 +32,7 @@ import {
   normalizeStatus,
   prettifyNodeName,
   resolveNodeDuration,
+  statusBadgeClass,
   statusBadgeVariant,
   statusLabel,
   toTimestamp,
@@ -263,7 +264,7 @@ function NodeDetailCard({
               <CardTitle className="text-sm font-medium text-zinc-300 truncate" title={displayName}>
                 {displayName}
               </CardTitle>
-              <Badge variant={statusBadgeVariant(node.status)} className="text-xs">
+              <Badge variant={statusBadgeVariant(node.status)} className={cn("text-xs", statusBadgeClass(node.status))}>
                 {statusLabel(node.status)}
               </Badge>
               <span className={cn(
@@ -609,7 +610,10 @@ export function RagTraceDetailPage() {
               <h1 className="text-lg font-semibold text-zinc-100">
                 {selectedRun.traceName || "未命名链路"}
               </h1>
-              <Badge variant={statusBadgeVariant(selectedRun.status)} className="text-xs">
+              <Badge
+                variant={statusBadgeVariant(selectedRun.status)}
+                className={cn("text-xs", statusBadgeClass(selectedRun.status))}
+              >
                 {statusLabel(selectedRun.status)}
               </Badge>
             </div>

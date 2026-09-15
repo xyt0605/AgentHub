@@ -301,6 +301,22 @@ function ProviderTestButton({
           {result.message}
         </span>
       ) : null}
+      {/* 逐候选展开：整体失败时用户要能一眼看出是哪个模型、哪种能力挂了，
+          否则又退回「绿勾/红叉都只给一句话」的老问题 */}
+      {result?.capabilities?.length ? (
+        <div className="flex flex-col gap-0.5 pl-4">
+          {result.capabilities.map((probe) => (
+            <span
+              key={`${probe.capability}-${probe.modelId}`}
+              className={cn("text-[11px]", probe.ok ? "text-zinc-400" : "text-rose-400")}
+              title={probe.message}
+            >
+              {probe.ok ? "✓" : "✗"} {probe.capability} · {probe.modelId}
+              <span className="text-zinc-500"> — {probe.message}</span>
+            </span>
+          ))}
+        </div>
+      ) : null}
     </div>
   );
 }

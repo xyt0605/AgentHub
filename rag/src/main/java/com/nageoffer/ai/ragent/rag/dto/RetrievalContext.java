@@ -19,6 +19,7 @@ package com.nageoffer.ai.ragent.rag.dto;
 
 import cn.hutool.core.util.StrUtil;
 import com.nageoffer.ai.ragent.framework.convention.RetrievedChunk;
+import com.nageoffer.ai.ragent.framework.trace.TraceDegradable;
 import lombok.Builder;
 import lombok.Data;
 
@@ -31,7 +32,7 @@ import java.util.Set;
  */
 @Data
 @Builder
-public class RetrievalContext {
+public class RetrievalContext implements TraceDegradable {
 
     /**
      * MCP 召回的上下文
@@ -55,6 +56,16 @@ public class RetrievalContext {
     private Set<String> eligibleIntentIds = Set.of();
 
     /**
+     * 本次检索中技术性失败的通道描述（形如 "VectorSearch: ..."）
+     * <p>
+     * 空上下文的两种成因必须分开：通道正常跑完但没匹配到，是「知识库里确实没有」；
+     * 通道压根没查成（鉴权失败 / 后端不可达 / 超时），是服务异常。
+     * 二者混在一起时，密钥失效会伪装成查无此文，排查要绕到日志里才看得见
+     */
+    @Builder.Default
+    private List<String> channelFailures = List.of();
+
+    /**
      * 是否存在 MCP 上下文
      */
     public boolean hasMcp() {
@@ -73,5 +84,17 @@ public class RetrievalContext {
      */
     public boolean isEmpty() {
         return !hasMcp() && !hasKb();
+    }
+
+    /**
+     * 检索链路是否发生技术性故障（与是否召回到内容正交）
+     */
+    public boolean isDegraded() {
+        return channelFailures != null && !channelFailures.isEmpty();
+    }
+
+    @Override
+    public String traceDegradedReason() {
+        return isDegraded() ? String.join("；", channelFailures) : null;
     }
 }

@@ -118,6 +118,27 @@ public class StreamChatTraceRunner {
     }
 
     /**
+     * 把当前线程正在跑的 run 标记为降级
+     * <p>
+     * 供 pipeline 在「链路有故障但仍要正常回话」时调用（典型如检索通道全挂、只能回兜底文案）。
+     * 必须在 callback 终态之前调用：onComplete 会立刻触发 finishRun 收尾
+     *
+     * @param reason 降级原因，为空则忽略本次标记
+     */
+    public void markDegraded(String reason) {
+        if (!traceProperties.isEnabled() || StrUtil.isBlank(reason)) {
+            return;
+        }
+        String traceId = RagTraceContext.getTraceId();
+        if (StrUtil.isBlank(traceId)) {
+            return;
+        }
+        int max = traceProperties.getMaxErrorLength();
+        traceRecordService.markRunDegraded(traceId,
+                reason.length() <= max ? reason : reason.substring(0, max));
+    }
+
+    /**
      * 记录用户感知首包 TTFT：从 run 开始（pipeline 入口）到推给前端第一个字
      * 反映完整链路前置开销（路由 / 改写 / 意图 / 检索 / LLM 首包等）
      */

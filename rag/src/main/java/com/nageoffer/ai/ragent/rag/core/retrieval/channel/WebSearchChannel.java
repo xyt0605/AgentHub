@@ -113,7 +113,8 @@ public class WebSearchChannel implements SearchChannel {
             HttpUrl httpUrl = HttpUrl.parse(config.getApiUrl());
             if (httpUrl == null) {
                 log.warn("You.com 联网检索 api-url 配置非法：{}，返回空结果", config.getApiUrl());
-                return emptyResult(System.currentTimeMillis() - startTime);
+                return failedResult(System.currentTimeMillis() - startTime,
+                        "api-url 配置非法: " + config.getApiUrl());
             }
 
             Request request = new Request.Builder()
@@ -137,7 +138,8 @@ public class WebSearchChannel implements SearchChannel {
                 if (!response.isSuccessful()) {
                     // 401 鉴权失败 / 429 限流 / 5xx 服务端异常等统一降级为空结果（不打印 Key）
                     log.warn("You.com 联网检索请求失败, code={}, 返回空结果", response.code());
-                    return emptyResult(System.currentTimeMillis() - startTime);
+                    return failedResult(System.currentTimeMillis() - startTime,
+                            "HTTP " + response.code());
                 }
                 String body = response.body() != null ? response.body().string() : "";
                 chunks = parseChunks(body, resolveCount(config));
@@ -155,7 +157,7 @@ public class WebSearchChannel implements SearchChannel {
         } catch (Exception e) {
             // 联网检索属于补充通道，任何异常（含超时、响应解析失败）都不允许向上抛出
             log.warn("You.com 联网检索失败，降级为空结果: {}", e.getMessage());
-            return emptyResult(System.currentTimeMillis() - startTime);
+            return failedResult(System.currentTimeMillis() - startTime, SearchChannel.describeFailure(e));
         }
     }
 

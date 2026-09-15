@@ -85,6 +85,7 @@ export function RagTracePage() {
     const successCount = runs.filter((item) => normalizeStatus(item.status) === "success").length;
     const failedCount = runs.filter((item) => normalizeStatus(item.status) === "failed").length;
     const runningCount = runs.filter((item) => normalizeStatus(item.status) === "running").length;
+    const degradedCount = runs.filter((item) => normalizeStatus(item.status) === "degraded").length;
     const avgDuration = durations.length
       ? Math.round(durations.reduce((sum, value) => sum + value, 0) / durations.length)
       : 0;
@@ -97,6 +98,7 @@ export function RagTracePage() {
       successCount,
       failedCount,
       runningCount,
+      degradedCount,
       avgDuration,
       avgTtft,
       successRate
@@ -118,8 +120,8 @@ export function RagTracePage() {
   }[] = [
     {
       key: "status",
-      title: "成功 / 失败 / 运行中",
-      value: `${traceStats.successCount} / ${traceStats.failedCount} / ${traceStats.runningCount}`,
+      title: "成功 / 降级 / 失败 / 运行中",
+      value: `${traceStats.successCount} / ${traceStats.degradedCount} / ${traceStats.failedCount} / ${traceStats.runningCount}`,
       icon: <Activity className="h-4 w-4" />,
       tone: "emerald"
     },

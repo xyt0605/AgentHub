@@ -44,6 +44,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -136,7 +137,7 @@ class MultiChannelRetrievalEngineTest {
         when(slow.isEnabled(any(SearchContext.class))).thenReturn(true);
         // Mockito 对接口 default 方法默认桩为 null，会被引擎的 nonNull 过滤悄悄吞掉——
         // 那样本测试只证明快通道无恙，降级出口本身反而没被测到，必须真调 default 实现
-        when(slow.emptyResult(anyLong())).thenCallRealMethod();
+        when(slow.failedResult(anyLong(), anyString())).thenCallRealMethod();
         when(slow.search(any(SearchContext.class))).thenAnswer(invocation -> {
             Thread.sleep(1_000);
             return SearchChannelResult.builder()
@@ -174,7 +175,11 @@ class MultiChannelRetrievalEngineTest {
             assertTrue(result.retrievedIntentIds().isEmpty());
             assertTrue(result.eligibleIntentIds(List.of(candidate)).isEmpty());
             assertTrue(elapsedMs < 800, "慢通道不得钳制整次检索，实际耗时 " + elapsedMs + "ms");
-            verify(slow).emptyResult(0L);
+            verify(slow).failedResult(200L, "通道超时（>200ms）");
+            assertEquals(List.of("graph: 通道超时（>200ms）"), result.channelFailures(),
+                    "超时是技术性故障，必须能与「查到了但没匹配」区分开");
+            assertEquals("graph: 通道超时（>200ms）", result.traceDegradedReason(),
+                    "故障需对 trace 可见，否则 401/超时会被记成 SUCCESS");
         } finally {
             pool.shutdownNow();
         }

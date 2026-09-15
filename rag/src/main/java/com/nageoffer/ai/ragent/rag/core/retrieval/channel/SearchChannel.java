@@ -58,8 +58,8 @@ public interface SearchChannel {
     SearchChannelType getType();
 
     /**
-     * 空结果交卷：检索失败或无数据时的降级形态，只带通道身份与耗时
-     * 引擎的超时降级与各通道的异常兜底共用，保证空结果的形状全站一致
+     * 空结果交卷：通道正常跑完但无数据可召回时的形态，只带通道身份与耗时
+     * 表达「查过了，确实没有」，与 {@link #failedResult} 的「没查成」互斥
      */
     default SearchChannelResult emptyResult(long latencyMs) {
         return SearchChannelResult.builder()
@@ -68,5 +68,38 @@ public interface SearchChannel {
                 .chunks(List.of())
                 .latencyMs(latencyMs)
                 .build();
+    }
+
+    /**
+     * 故障交卷：通道因技术原因没能完成检索（鉴权失败、后端不可达、超时等）
+     * <p>
+     * 形状与空结果一致好让融合层无差别处理，但多带一个 failed 标记：
+     * 下游据此把「服务异常」与「知识库没这内容」分开呈现，不再让 401 伪装成查无此文
+     */
+    default SearchChannelResult failedResult(long latencyMs, String reason) {
+        return SearchChannelResult.builder()
+                .channelType(getType())
+                .channelName(getName())
+                .chunks(List.of())
+                .latencyMs(latencyMs)
+                .failed(true)
+                .failureReason(reason)
+                .build();
+    }
+
+    /**
+     * 把异常压成一行归因文本
+     * <p>
+     * 取抛出处而非根因的 message：路由类异常（「All Embedding model candidates failed: ...」）
+     * 已在最外层汇总了全部候选的失败缘由，根因只剩最后一个候选的细节，信息反而更少
+     */
+    static String describeFailure(Throwable error) {
+        if (error == null) {
+            return "未知故障";
+        }
+        String message = error.getMessage();
+        return message == null || message.isBlank()
+                ? error.getClass().getSimpleName()
+                : error.getClass().getSimpleName() + ": " + message;
     }
 }

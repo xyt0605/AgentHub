@@ -31,6 +31,14 @@ public interface RagTraceRecordService {
 
     void finishRun(String traceId, String status, String errorMessage, Date endTime, long durationMs);
 
+    /**
+     * 把运行中的 run 标记为降级：链路跑通了，但中途有组件故障被吞掉（典型如检索通道鉴权失败）
+     * <p>
+     * 只作用于 RUNNING 的 run，且随后的 finishRun 成功收尾不会覆盖该状态——
+     * 否则「答了一句兜底话」的请求会和真正健康的请求一样记成 SUCCESS，链路追踪列表里无从分辨
+     */
+    void markRunDegraded(String traceId, String reason);
+
     void startNode(RagTraceNodeDO node);
 
     void finishNode(String traceId, String nodeId, String status, String errorMessage, Date endTime, long durationMs);
