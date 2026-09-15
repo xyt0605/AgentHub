@@ -1,6 +1,6 @@
 # Agenthub 项目交接文档
 
-> 首次交接：2026-08-31 ｜ 更新：2026-09-14（追加 §9 ~ §11，覆盖动态配置体系、AI 配置面板与聊天增强；§1~§8 仍有效）
+> 首次交接：2026-08-31 ｜ 更新：2026-09-16（追加 §9 ~ §13；最新一轮见 §13 检索降级可见性/能力探测/向量错位数据事故；§1~§8 仍有效）
 
 ---
 
@@ -246,8 +246,11 @@ RAGChatController (/rag/v3/chat)
 7. **WSL 空闲回收**（§6.4 补充）：保活会话 `wsl sleep infinity` 需随开发会话重启；容器均有 `--restart unless-stopped` 可自愈
 8. **前端 tsc 不报的雷**：新建 .tsx 用 `React.*` 忘 import（UMD 全局类型不报错）、运行时 undefined 引用——**新建 UI 组件必须浏览器冒烟后再交付**；Python/脚本 patch 代码时每个替换必须 assert 匹配次数
 9. **trace 异步落库**：`t_rag_trace_node` 在对话结束后延迟写入，curl 完立即查会读到上一次的 run；验证模型路由选"默认路由绝不会用的供应商"（如 deepseek）区分度最高
-10. **"/models 探活通过 ≠ key 可用"（2026-09-14）**：各平台的模型列表接口对 key 校验宽松，chat/completions 才严格。当前运行时三家 key 在 chat 调用时全部 401（bailian "Incorrect API key"——运行时 key 为 sk-20f***3d02，并非早前实测成功的 sk-ws 开头 key；deepseek "Authentication Fails"；siliconflow "Token is invalid"），需到各平台重新生成密钥并在 AI 配置面板重填。agent 引擎模型调用失败会直接断连 SSE（§4.4 已知行为），前端表现为对话无响应
+10. **"/models 探活通过 ≠ key 可用"（2026-09-14 发现，09-16 已修）**：各平台的模型列表接口对 key 校验宽松，chat/embedding 端点才严格。2026-09-14 三家 key 全部失效（chat 401）；09-15 用户已换新 key（chat/embedding/rerank 实测全通）。**遗留：09-16 验证降级注入时坏 key 被存入 DB 覆盖、重置后回 yaml 空 key，siliconflow 的 key 需在面板重填一次**。agent 引擎模型调用失败会直接断连 SSE（§4.4 已知行为），前端表现为对话无响应。测试连通现已含 embedding/rerank 真实探测（§13），不再有假绿
 11. **排查 agent/workflow 对话无响应的顺序**：先查 t_rag_trace_run 最新记录的 error_message（401/余额/超时一目了然），再查 t_message 是否落库，最后才怀疑代码；SSE 只发 meta 后挂住多为模型调用失败断连而非排队卡死
+12. **Windows↔WSL localhost 端口转发会静默失效（2026-09-16）**：WSL 内 redis/pg 全正常（docker ps 健康、容器内 PONG）但 Windows 侧 connection refused——这是 WSL2 已知顽疾，与容器无关。**修法：`wsl --shutdown` 等 8 秒重启，容器随 --restart 自愈，转发恢复**。遇到"容器明明在跑却拒连"先试这招，别浪费时间查容器
+13. **向量化入库的 collection 错位事故（2026-09-16 修复）**：密钥失效期上传的文档向量全部写进 `default` collection（vectorTarget 定位未生效），而检索按各 KB 的 collection_name 查——表里有数据、检索恒空、trace 还是 SUCCESS。**排查 SQL**：`SELECT collection_name, count(*) FROM t_knowledge_vector GROUP BY 1` 对照 t_knowledge_base.collection_name；错位时按 metadata->>'doc_id' JOIN 迁移即可（向量本身是好的，不必重新烧 embedding）
+14. **Git Bash 后台进程生存期**：`(cmd &)` 子 shell 方式启动的 java 会随本轮 shell 结束被杀且日志为空——持久后台一律用 ZCode 后台任务或 nohup+disown（npm 是 .cmd shim，nohup 对它无效）
 
 ## 11. 关键入口速查（增量）
 
@@ -264,12 +267,56 @@ RAGChatController (/rag/v3/chat)
 ## 12. 待办与建议路线（更新）
 
 原 §7 待办状态：①真实 Key 端到端验收——workflow 已验证；②agent 引擎来源面板——**已实现（2026-09-14）**：KnowledgeSearchTool 增加命中收集器，Runner 在回答完成后经 SourcesAssembler 装配 SourceRef 走 onSources 通道，前端来源面板与消息落库自动复用；③深度思考透传 agent——**已实现（2026-09-14）**：buildAgent 经 AgentScope GenerateOptions.additionalBodyParam 显式下发 enable_thinking，与 workflow 客户端同语义；④AGENT_MAIN 内置人设入库——**已完成（2026-09-14）**：upgrades/v1.1.1/260914_agent_main_prompt.sql + init_data 同步，槽位清空仍回落代码内置；⑤多 agent 方向——**未做**；⑥品牌截图重制——**未做**。
-⚠️ 注意：②③的端到端验证受当前密钥问题阻塞（见 §10 第 10 条），代码链路已通过日志确认执行到位（AgentModelFactory 构建 -> 模型 HTTP 调用），待有效密钥后切 agenthub.engine.type=agent 复验来源面板与思考档。
+⚠️ 注意：②③的端到端验证受密钥状态影响（见 §10 第 10 条遗留项）——siliconflow key 重填后 workflow 链路即可复验；agent 引擎复验需切 agenthub.engine.type=agent 重启。
 
 新增待办（按优先级）：
 
-1. **AI 配置页简化**：低频区块（Embedding/Rerank/VLM、检索管线）默认折叠，首屏聚焦供应商密钥与模型选择（用户反馈"眼花缭乱"）
-2. **模型/思考强度选择持久化**：当前刷新回"自动"，记 localStorage（按用户维度）
-3. **关键路径自动化测试**：密钥掩码回退、信封解包、能力校验、漏斗校验（本次全靠手工 curl，曾出信封事故）
-4. ~~**一键启动脚本**~~：已完成（`scripts/start-dev.sh`，支持 --build / --restart / --backend-only，含残留进程自愈；2026-09-14）
-5. **AiConfigPage.tsx 拆分**（约 1200 行）：按命名空间拆组件文件
+1. **【立即】siliconflow key 面板重填**：09-16 降级验证把坏 key 存入 DB 覆盖、重置后回 yaml 空 key（见 §10.10 遗留），重填后对话与检索完全恢复
+2. **AI 配置页简化**：低频区块（Embedding/Rerank/VLM、检索管线）默认折叠，首屏聚焦供应商密钥与模型选择（用户反馈"眼花缭乱"）
+3. **模型/思考强度选择持久化**：当前刷新回"自动"，记 localStorage（按用户维度）
+4. **关键路径自动化测试**：密钥掩码回退、信封解包、能力校验、漏斗校验（检索降级聚合已有 4 用例；其余仍靠手工 curl，曾出信封事故）
+5. **AiConfigPage.tsx 拆分**（约 1300 行）：按命名空间拆组件文件
+6. **向量化错位的防御**：入库链路补 vectorTarget 生效断言 + 向量表按 collection 对账的巡检（§10.13 的技术性预防，目前只有事后 SQL）
+
+
+## 13. 2026-09-15 ~ 09-16 改造记录：检索降级可见性与供应商能力探测
+
+### 13.1 问题背景（一次三面失真的排查）
+
+密钥失效期出现"三面全假"组合：**面板测试连通全绿**（只测 /models，不校验 embedding 端点与模型权限）+ **问答一路"未检索到"**（embedding 401 被三层 catch 吞成空结果，与"库里确实没有"同形）+ **trace 标 SUCCESS**（管线正常走完，没人上报 401）。排查只能靠翻原始日志逐帧还原。
+
+### 13.2 检索降级可见性（commit 011c5e4）
+
+- 通道层：`SearchChannelResult.failed/failureReason`（原有）→ 各通道统一 `describeFailure` 描述异常
+- 聚合：`MultiChannelRetrievalEngine` 收集 `channelFailures` → `RetrievalContext.isDegraded()`；整个子问题失败也计入（等价全部通道故障）
+- 消费：`StreamChatPipeline` 兜底文案区分**技术性失败**（"检索服务暂时不可用，请稍后重试或联系管理员"）与**真空库**（"未检索到与问题相关的文档内容"）；`markRunDegraded` 在 onComplete 前把 DEGRADED+原因写进 trace run（必须在 onComplete 前，否则被 finishRun 的 SUCCESS 覆盖）
+- framework 新增 `TraceDegradable` 接口：返回值实现它即可让 `RagTraceAspect` 把节点记为 DEGRADED——方法不抛异常不再等于这一步成功
+- 前端：链路追踪列表/详情展示 DEGRADED 状态与原因
+- 测试：`MultiChannelRetrievalEngineTest` 降级聚合 4 用例
+
+### 13.3 供应商能力探测（消灭假绿）
+
+- `ProviderCapabilityProbe`：测试连通在 /models 通过后，按该供应商登记的 embedding/rerank 候选**逐个发最小真实调用**：
+  - embedding：发短文本，校验返回非空且**维度与 rag.default.dimension 建表维度一致**（维度不匹配会在入库期报错/检索期悄悄查空，必须配置期拦下）
+  - rerank：两条候选取 topN=1（单条候选触发客户端"无需精排"短路，一个请求都不发）
+  - 任一失败把整体绿勾压红，message 汇总"但 embedding xxx 调用失败"；探针自身异常不否定 /models 结论，单候选失败不遮蔽其余候选
+- 前端测试按钮逐候选展示 ✓/✗、模型、耗时与结论
+- 实测：siliconflow embedding"返回 1536 维向量"、bailian rerank"精排返回 1 条"（09-16）
+
+### 13.4 向量错位数据事故修复（§10.13 详述）
+
+密钥失效期上传的 115 个文档（168 chunk）向量全部写入 default collection，检索按 KB collection 查恒空。按 `metadata->>'doc_id'` JOIN t_knowledge_document/t_knowledge_base 迁移 168 行至正确集合，检索链路复通（来源面板/行内引用/正确答案恢复），未重新烧 embedding。
+
+### 13.5 本轮环境事故速记
+
+- Windows↔WSL localhost 转发静默失效 → `wsl --shutdown` 自愈（§10.12）
+- Git Bash `(cmd &)` 启动的 java 随 shell 被杀且无日志 → 持久后台用 ZCode 后台任务（§10.14）
+
+## 14. 关键入口速查（13 轮增量）
+
+| 事项 | 位置 |
+|---|---|
+| 检索降级链路 | SearchChannelResult.failed → MultiChannelRetrievalEngine.channelFailures → RetrievalContext.isDegraded → StreamChatPipeline.markRunDegraded |
+| TraceDegradable | framework/trace/TraceDegradable.java（RagTraceAspect 消费，节点记 DEGRADED） |
+| 能力探测 | rag/.../config/dynamic/ProviderCapabilityProbe.java（test-provider 自动附带） |
+| 向量表 | t_knowledge_vector（collection_name + metadata->>'doc_id'；对账 SQL 见 §10.13） |
